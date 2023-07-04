@@ -10,23 +10,28 @@ theme_set(theme_light())
 library(magrittr)
 library(coretta2018itaegg)
 library(brms)
+library(marginaleffects)
+library(mgcv)
+library(tidygam)
 ```
 
 ```{r}
 data("formants")
 
 formants %<>% mutate(
-  label = as.factor(label),
-  duration_c = as.vector(scale(duration)),
-  duration_log = as.vector(scale(log(duration))),
-  f13_c = as.vector(scale(f13))
+  duration = duration * 1000,
+  vowel = as.factor(label),
+  duration_z = as.vector(scale(duration)),
+  duration_logz = as.vector(scale(log(duration))),
+  f13_z = as.vector(scale(f13)),
+  f23_z = as.vector(scale(f23))
 )
-contrasts(formants$label) <- "contr.sum"
+contrasts(formants$vowel) <- "contr.sum"
 ```
 
 ```{r}
 formants %>%
-  ggplot(aes(f13_c, duration_c, colour = label)) +
+  ggplot(aes(f13_z, duration_z, colour = vowel)) +
   geom_point(alpha = 0.25) +
   geom_smooth(method = "lm")
 ```
@@ -35,15 +40,15 @@ formants %>%
 priors <- c(
   prior(normal(0, 1), class = Intercept),
   prior(normal(0, 1), class = b),
-  prior(cauchy(0, 0.5), class = sigma),
+  prior(cauchy(0, 0.1), class = sigma),
   prior(lkj(2), class = cor),
-  prior(cauchy(0, 0.5), class = sd)
+  prior(cauchy(0, 0.1), class = sd)
 )
 
 bm_1_priors <- brm(
-  duration_log ~
-    vowel * f13_c +
-    (vowel * f13_c | speaker),
+  duration_logz ~
+    vowel * f13_z +
+    (vowel * f13_z | speaker),
   family = gaussian,
   data = formants,
   prior = priors,
@@ -56,14 +61,15 @@ bm_1_priors <- brm(
 ```
 
 ```{r}
-conditional_effects(bm_1_priors, "f13_c:vowel")
+conditional_effects(bm_1_priors, "f13_z:vowel")
+conditional_effects(bm_1_priors, "vowel")
 ```
 
 ```{r}
 bm_1 <- brm(
-  duration_log ~
-    vowel * f13_c +
-    (vowel * f13_c | speaker),
+  duration_logz ~
+    vowel * f13_z +
+    (vowel * f13_z | speaker),
   family = gaussian,
   data = formants,
   prior = priors,
@@ -79,7 +85,57 @@ bm_1
 ```
 
 ```{r}
-conditional_effects(bm_1, "f13_c:vowel")
-conditional_effects(bm_1, "f13_c:vowel", spaghetti = TRUE, ndraws = 100)
+conditional_effects(bm_1, "f13_z:vowel")
+conditional_effects(bm_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100)
+```
+
+```{r}
+avg_comparisons(bm_1, variables = "f13_z", by = "vowel")
+```
+
+```{r}
+gam_1 <- bam(
+  duration_logz ~ s(f13_z) + s(f13_z, as.factor(speaker), bs = "fs", m = 1),
+  data = formants
+)
+```
+
+```{r}
+vmean <- aggregate(formants$f13_z, list(formants$vowel), mean)
+
+predict_gam(gam_1, exclude_terms = "s(f13_z,as.factor(speaker))", length_out = 100) %>%
+  plot(series = "f13_z") +
+  geom_vline(data = vmean, aes(xintercept = x, colour = Group.1))
+```
+
+```{r}
+gam_2 <- bam(
+  duration_logz ~ s(f13_z, f23_z) + s(f13_z, f23_z, as.factor(speaker), bs = "fs", m = 1),
+  data = formants
+)
+```
+
+
+```{r}
+plot(gam_2)
+```
+
+```{r}
+predict_gam(gam_2, length_out = 50, exclude_terms = "s(f13_z,f23_z,as.factor(speaker))") %>%
+  plot(series = c("f13_z", "f23_z"))
+```
+
+```{r}
+gam_3 <- bam(
+  duration_logz ~ s(f13_z) + s(f13_z, vowel, bs = "fs", m = 1) + s(f13_z, as.factor(speaker), bs = "fs", m = 1),
+  data = formants
+)
+```
+
+```{r}
+predict_gam(gam_3, exclude_terms = "s(f13_z,as.factor(speaker))", length_out = 100) %>%
+  plot(series = "f13_z", comparison = "vowel") +
+  geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
+  facet_wrap(~ vowel)
 ```
 
