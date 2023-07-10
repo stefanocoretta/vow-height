@@ -31,7 +31,8 @@ formants %<>% mutate(
   duration_z = as.vector(scale(duration)),
   duration_logz = as.vector(scale(log(duration))),
   f13_z = as.vector(scale(f13)),
-  f23_z = as.vector(scale(f23))
+  f23_z = as.vector(scale(f23)),
+  speaker = as.factor(speaker)
 )
 contrasts(formants$vowel) <- "contr.sum"
 ```
