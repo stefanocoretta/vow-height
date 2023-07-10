@@ -13,6 +13,7 @@ theme_set(theme_light())
 library(magrittr)
 library(coretta2018itaegg)
 library(brms)
+library(tidybayes)
 library(marginaleffects)
 library(mgcv)
 library(tidygam)
@@ -29,6 +30,7 @@ formants %<>% mutate(
   duration = duration * 1000,
   vowel = as.factor(label),
   duration_z = as.vector(scale(duration)),
+  duration_log = log(duration),
   duration_logz = as.vector(scale(log(duration))),
   f13_z = as.vector(scale(f13)),
   f23_z = as.vector(scale(f23)),
@@ -114,7 +116,7 @@ conditional_effects(bm_1_priors, "vowel")
 ### Model fit
 
 ```{r}
-#| label: bm_1
+#| label: bm-1
 
 bm_1 <- brm(
   duration_logz ~
@@ -131,17 +133,65 @@ bm_1 <- brm(
 ```
 
 ```{r}
+#| label: bm-1-fixef
 fixef(bm_1)
 ```
 
 ```{r}
+#| label: bm-1-cond
+
 conditional_effects(bm_1, "f13_z:vowel")
 conditional_effects(bm_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100)
 ```
 
 ```{r}
-avg_comparisons(bm_1, variables = "f13_z", by = "vowel")
+#| label: bm-1-comp
+
+avg_comparisons(bm_1, variables = "f13_z", by = "vowel", conf_level = 0.9)
 ```
+
+We need to get the predicted draws to convert duration and F1 back to ms and hz. Note that duration was logged then scaled.
+
+```{r}
+#| label: bm-1-preds
+
+seq_minmax <- function(x, by = 1) {
+  seq(min(x), max(x), by = by)
+}
+
+bm_1_grid <- expand_grid(
+  vowel = levels(formants$vowel),
+  f13_z = seq_minmax(formants$f13_z, 0.5)
+)
+
+bm_1_preds <- predicted_draws(bm_1, newdata = bm_1_grid, re_formula = NA) %>%
+  mutate(
+    duration_log = .prediction * sd(formants$duration_log) + mean(formants$duration_log),
+    duration = exp(duration_log),
+    f13 = f13_z * sd(formants$f13) + mean(formants$f13)
+  )
+```
+
+We can now plot the model predictions in the original scale.
+
+```{r}
+#| label: bm1-plot
+
+bm_1_preds %>%
+  group_by(vowel, f13) %>%
+  summarise(
+    duration_ms = median(duration),
+    # Get the 90% CrI
+    q0.05 = quantile(duration, probs = 0.05),
+    q0.90 = quantile(duration, probs = 0.95),
+    .groups = "drop"
+  ) %>%
+  ggplot(aes(f13, duration_ms)) +
+  geom_ribbon(aes(ymin = q0.05, ymax = q0.90, group = vowel), alpha = 0.25) +
+  geom_line(aes(colour = vowel), linewidth = 1) +
+  facet_wrap(~vowel)
+```
+
 
 ## Non-linear modelling
 
