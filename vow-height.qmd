@@ -2,7 +2,10 @@
 title: "vow-height"
 ---
 
+## Attach packages
+
 ```{r}
+#| label: packages
 #| message: false
 
 library(tidyverse)
@@ -15,7 +18,11 @@ library(mgcv)
 library(tidygam)
 ```
 
+## Read data
+
 ```{r}
+#| label: read-data
+
 data("formants")
 
 formants %<>% mutate(
@@ -29,14 +36,28 @@ formants %<>% mutate(
 contrasts(formants$vowel) <- "contr.sum"
 ```
 
+## Plotting
+
 ```{r}
+#| label: dur-f1
+
 formants %>%
   ggplot(aes(f13_z, duration_z, colour = vowel)) +
   geom_point(alpha = 0.25) +
   geom_smooth(method = "lm")
 ```
 
+## Linear modelling
+
+### Prior predictive checks
+
+The outcome `duration_logz` and predictor `f13_z` are z-scored and `vowel` is sum coded so that `Intercept` is the grand mean.
+
+I am using relatively weakly informative priors.
+
 ```{r}
+#| label: prior-check
+
 priors <- c(
   prior(normal(0, 1), class = Intercept),
   prior(normal(0, 1), class = b),
@@ -61,11 +82,18 @@ bm_1_priors <- brm(
 ```
 
 ```{r}
+#| label: prior-plot
+
 conditional_effects(bm_1_priors, "f13_z:vowel")
 conditional_effects(bm_1_priors, "vowel")
 ```
 
+
+### Model fit
+
 ```{r}
+#| label: bm_1
+
 bm_1 <- brm(
   duration_logz ~
     vowel * f13_z +
@@ -81,7 +109,7 @@ bm_1 <- brm(
 ```
 
 ```{r}
-bm_1
+fixef(bm_1)
 ```
 
 ```{r}
@@ -92,6 +120,8 @@ conditional_effects(bm_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100)
 ```{r}
 avg_comparisons(bm_1, variables = "f13_z", by = "vowel")
 ```
+
+## Non-linear modelling
 
 ```{r}
 gam_1 <- bam(
@@ -137,5 +167,52 @@ predict_gam(gam_3, exclude_terms = "s(f13_z,as.factor(speaker))", length_out = 1
   plot(series = "f13_z", comparison = "vowel") +
   geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
   facet_wrap(~ vowel)
+```
+
+```{r}
+gam_4 <- bam(
+  duration_logz ~
+    vowel +
+    s(f13_z) +
+    s(f13_z, as.factor(speaker), bs = "fs", m = 1),
+  data = formants
+)
+```
+
+```{r}
+predict_gam(gam_4, exclude_terms = "s(f13_z,as.factor(speaker))", length_out = 100) %>%
+  plot(series = "f13_z", comparison = "vowel") +
+  geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~ vowel)
+```
+
+```{r}
+priors_s <- c(
+  prior(normal(0, 1), class = Intercept),
+  prior(normal(0, 1), class = b),
+  prior(cauchy(0, 0.1), class = sigma),
+  prior(lkj(2), class = cor),
+  prior(cauchy(0, 0.1), class = sd),
+  prior(cauchy(0, 0.1), class = sds)
+)
+```
+
+
+```{r}
+bm_s1 <- brm(
+  duration_logz ~
+    vowel +
+    s(f13_z, k = 5) +
+    s(f13_z, speaker, bs = "fs", m = 1) +
+    (vowel | speaker),
+  family = gaussian,
+  data = formants,
+  prior = priors_s,
+  cores = 4,
+  threads = threading(2),
+  backend = "cmdstanr",
+  file = "data/cache/bm_s1",
+)
 ```
 
