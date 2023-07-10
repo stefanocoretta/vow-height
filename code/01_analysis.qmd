@@ -40,6 +40,27 @@ contrasts(formants$vowel) <- "contr.sum"
 ## Plotting
 
 ```{r}
+#| label: vowel-plot
+
+formants %>%
+  ggplot(aes(f23_z, f13_z, colour = vowel)) +
+  geom_point(alpha = 0.5) +
+  stat_ellipse(type = "norm") +
+  scale_x_reverse(position = "top") + scale_y_reverse(position = "right") +
+  coord_fixed()
+```
+
+
+```{r}
+#| label: dur-f1-dens
+
+formants %>%
+  ggplot(aes(f13_z, duration_z)) +
+  geom_density_2d_filled()
+```
+
+
+```{r}
 #| label: dur-f1
 
 formants %>%
