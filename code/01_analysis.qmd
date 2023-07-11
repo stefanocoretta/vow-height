@@ -195,96 +195,146 @@ bm_1_preds %>%
 
 ## Non-linear modelling
 
+### F1
+
 ```{r}
+#| label: gam-1
+
 gam_1 <- bam(
-  duration_logz ~ s(f13_z) + s(f13_z, as.factor(speaker), bs = "fs", m = 1),
-  data = formants
-)
-```
-
-```{r}
-vmean <- aggregate(formants$f13_z, list(formants$vowel), mean)
-
-predict_gam(gam_1, exclude_terms = "s(f13_z,as.factor(speaker))", length_out = 100) %>%
-  plot(series = "f13_z") +
-  geom_vline(data = vmean, aes(xintercept = x, colour = Group.1))
-```
-
-```{r}
-gam_2 <- bam(
-  duration_logz ~ s(f13_z, f23_z) + s(f13_z, f23_z, as.factor(speaker), bs = "fs", m = 1),
-  data = formants
-)
-```
-
-
-```{r}
-plot(gam_2)
-```
-
-```{r}
-predict_gam(gam_2, length_out = 50, exclude_terms = "s(f13_z,f23_z,as.factor(speaker))") %>%
-  plot(series = c("f13_z", "f23_z"))
-```
-
-```{r}
-gam_3 <- bam(
-  duration_logz ~ s(f13_z) + s(f13_z, vowel, bs = "fs", m = 1) + s(f13_z, as.factor(speaker), bs = "fs", m = 1),
-  data = formants
-)
-```
-
-```{r}
-predict_gam(gam_3, exclude_terms = "s(f13_z,as.factor(speaker))", length_out = 100) %>%
-  plot(series = "f13_z", comparison = "vowel") +
-  geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
-  facet_wrap(~ vowel)
-```
-
-```{r}
-gam_4 <- bam(
   duration_logz ~
     vowel +
     s(f13_z) +
-    s(f13_z, as.factor(speaker), bs = "fs", m = 1),
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1),
   data = formants
 )
 ```
 
 ```{r}
-predict_gam(gam_4, exclude_terms = "s(f13_z,as.factor(speaker))", length_out = 100) %>%
-  plot(series = "f13_z", comparison = "vowel") +
-  geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
-  geom_hline(yintercept = 0) +
-  facet_wrap(~ vowel)
+#| label: gam-1-summ
+
+summary(gam_1)
 ```
 
+
 ```{r}
+#| label: gam-1-plot
+
+vmean <- aggregate(formants$f13_z, list(formants$vowel), mean)
+# fs_terms <- c("s(f13_z,speaker)")
+fs_terms <- c("s(f13_z,speaker):vowela", "s(f13_z,speaker):vowele", "s(f13_z,speaker):voweli", "s(f13_z,speaker):vowelo", "s(f13_z,speaker):vowelu")
+
+predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100) %>%
+  plot(series = "f13_z", comparison = "vowel") +
+  geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  facet_wrap(~vowel)
+```
+
+### BRM
+
+```{r}
+#| label: bms-1-priors
+
 priors_s <- c(
   prior(normal(0, 1), class = Intercept),
   prior(normal(0, 1), class = b),
   prior(cauchy(0, 0.1), class = sigma),
-  prior(lkj(2), class = cor),
-  prior(cauchy(0, 0.1), class = sd),
   prior(cauchy(0, 0.1), class = sds)
+)
+
+bms_1 <- brm(
+  duration_logz ~
+    vowel +
+    s(f13_z) +
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1),
+  family = gaussian,
+  data = formants,
+  prior = priors_s,
+  sample_prior = "only",
+  cores = 4,
+  threads = threading(2),
+  backend = "cmdstanr",
+  file = "data/cache/bms_1_priors",
 )
 ```
 
+```{r}
+#| label: bms-1-priors-plot
+
+conditional_effects(bms_1, "f13_z:vowel")
+conditional_effects(bms_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100)
+```
+
+We specify `k = 5` based on the mgcv modelling above. Reducing `k` speeds up estimation (because there are less basis functions, hence less parameters to estimate).
+
 
 ```{r}
-bm_s1 <- brm(
+#| label: bms-1
+
+bms_1 <- brm(
   duration_logz ~
     vowel +
     s(f13_z, k = 5) +
-    s(f13_z, speaker, bs = "fs", m = 1) +
-    (vowel | speaker),
+    s(f13_z, speaker, by = vowel, k = 5, bs = "fs", m = 1),
   family = gaussian,
   data = formants,
   prior = priors_s,
   cores = 4,
   threads = threading(2),
   backend = "cmdstanr",
-  file = "data/cache/bm_s1",
+  file = "data/cache/bms_1"
 )
 ```
+
+```{r}
+#| label: bms-1-plot
+
+plot(conditional_effects(bms_1, "f13_z:vowel"), plot = FALSE)[[1]] + facet_wrap(~vowel)
+```
+
+### F1 and F2
+
+```{r}
+#| label: gam-2
+
+gam_2 <- bam(
+  duration_logz ~
+    vowel +
+    s(f13_z, f23_z) +
+    s(f13_z, f23_z, speaker, bs = "fs", m = 1),
+  data = formants
+)
+```
+
+```{r}
+#| label: gam-2-summ
+
+summary(gam_2)
+```
+
+```{r}
+#| label: gam-2-pred
+
+gam_2_preds <- predict_gam(gam_2, length_out = 50, exclude_terms = "s(f13_z,f23_z,speaker)")
+```
+
+```{r}
+#| label: gam-2-plot
+
+vmeans <- formants %>%
+  group_by(vowel) %>%
+  summarise(
+    f13_z = mean(f13_z), f23_z = mean(f23_z)
+  )
+
+gam_2_preds %>%
+  ggplot(aes(f23_z, f13_z)) +
+  geom_raster(aes(fill = duration_logz), interpolate = TRUE) +
+  geom_contour(aes(z = duration_logz), bins = 40, colour = "white", linewidth = 0.05) +
+  geom_label(data = vmeans, aes(label = vowel), size = 5) +
+  scale_x_reverse(position = "top") +
+  scale_y_reverse(position = "right") +
+  scale_fill_distiller(palette = "BuPu")
+```
+
 
