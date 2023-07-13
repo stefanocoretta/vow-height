@@ -203,16 +203,21 @@ bm_1_preds <- epred_draws(bm_1, newdata = bm_1_grid, re_formula = NA) %>%
 Let's also calculate the mean F1 values for each vowel, to be added in the plot below.
 
 ```{r}
+#| label: vmean
+
 vmean_f13 <- formants %>%
   group_by(vowel) %>%
   summarise(f13_mean = mean(f13))
+vmean_f13z <- formants %>%
+  group_by(vowel) %>%
+  summarise(f13z_mean = mean(f13_z))
 ```
 
 
 We can now plot the model predictions in the original scale.
 
 ```{r}
-#| label: bm1-plot
+#| label: bm1-pred-plot-1
 
 bm_1_preds %>%
   group_by(vowel, f13) %>%
@@ -224,9 +229,15 @@ bm_1_preds %>%
     .groups = "drop"
   ) %>%
   ggplot(aes(f13, duration_ms)) +
-  geom_ribbon(aes(ymin = q0.05, ymax = q0.90, group = vowel), alpha = 0.25) +
+  geom_ribbon(aes(ymin = q0.05, ymax = q0.90, fill = vowel), alpha = 0.25) +
   geom_line(aes(colour = vowel), linewidth = 1) +
-  facet_wrap(~vowel)
+  facet_wrap(~vowel) +
+  scale_colour_viridis_d() +
+  scale_fill_viridis_d()
+```
+
+```{r}
+#| label: bm1-pred-plot-2
 
 bm_1_preds %>%
   group_by(vowel, f13) %>%
@@ -234,28 +245,58 @@ bm_1_preds %>%
   stat_lineribbon() +
   facet_wrap(~vowel) +
   scale_fill_brewer()
+```
+
+```{r}
+#| label: bm1-pred-plot-ms-hz
 
 bm_1_preds %>%
   group_by(vowel, f13) %>%
   ggplot(aes(f13, duration, fill = vowel)) +
-  stat_lineribbon(.width = 0.9, alpha = 0.8) +
-  geom_vline(data = vmean_f13, aes(xintercept = f13_mean, colour = vowel)) +
+  stat_ribbon(.width = 0.98, alpha = 0.2) +
+  stat_ribbon(.width = 0.9, alpha = 0.4) +
+  stat_lineribbon(.width = 0.6, alpha = 0.8) +
+  geom_vline(data = vmean_f13, aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
+  geom_rug(data = formants, alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
   facet_wrap(~vowel) +
   labs(
     x = "F1 (Hz)", y = "Duration (ms)"
-  )
+  ) +
+  scale_fill_viridis_d() +
+  scale_colour_viridis_d() +
+  theme(legend.position = "none")
 ```
 
 But let's also plot this in the standardised logged duration scale.
 
 ```{r}
-#| label: bm-1-plot-2
+#| label: bm1-pred-plot-4
 
 bm_1_preds %>%
   group_by(vowel, f13) %>%
   ggplot(aes(f13_z, .epred, fill = vowel)) +
-  stat_lineribbon(.width = c(0.9)) +
-  facet_wrap(~vowel)
+  stat_ribbon(.width = 0.98, alpha = 0.2) +
+  stat_ribbon(.width = 0.9, alpha = 0.4) +
+  stat_lineribbon(.width = 0.6, alpha = 0.8) +
+  geom_vline(data = vmean_f13z, aes(xintercept = f13z_mean, colour = vowel)) +
+  facet_wrap(~vowel) +
+  scale_fill_viridis_d()
+```
+```{r}
+#| label: bm-1-ranef
+
+bm_1_ranef <- bm_1 %>%
+  spread_draws(b_Intercept, r_speaker[subject,var]) %>%
+  mutate(condition_mean = b_Intercept + r_speaker)
+```
+
+```{r}
+#| label: bm-1-ranef-f13-z
+
+bm_1_ranef %>%
+  filter(var == "f13_z") %>%
+  ggplot(aes(y = reorder(subject, r_speaker, median), x = r_speaker)) +
+  stat_halfeye()
 ```
 
 
