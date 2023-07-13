@@ -290,6 +290,7 @@ bms_1 <- brm(
 #| label: bms-1-plot
 
 plot(conditional_effects(bms_1, "f13_z:vowel"), plot = FALSE)[[1]] + facet_wrap(~vowel)
+plot(conditional_effects(bms_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100), plot = FALSE)[[1]] + facet_wrap(~vowel)
 ```
 
 ### F1 and F2
