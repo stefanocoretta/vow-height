@@ -46,13 +46,33 @@ contrasts(formants$vowel) <- "contr.sum"
 #| label: vowel-plot
 
 formants %>%
-  ggplot(aes(f23_z, f13_z, colour = vowel)) +
-  geom_point(alpha = 0.5) +
+  group_by(speaker) %>%
+  mutate(
+    f13_speaker_z = as.vector(scale(f13)),
+    f23_speaker_z = as.vector(scale(f23))
+  ) %>%
+  ggplot(aes(f23_speaker_z, f13_speaker_z, colour = vowel)) +
+  geom_point(alpha = 0.2) +
   stat_ellipse(type = "norm") +
   scale_x_reverse(position = "top") + scale_y_reverse(position = "right") +
   coord_fixed()
 ```
 
+```{r}
+#| label: vowel-plot
+
+formants %>%
+  group_by(speaker) %>%
+  mutate(
+    f13_speaker_z = as.vector(scale(f13)),
+    f23_speaker_z = as.vector(scale(f23))
+  ) %>%
+  ggplot(aes(f23_speaker_z, f13_speaker_z)) +
+  geom_point(aes(colour = duration), alpha = 0.8) +
+  stat_ellipse(aes(group = vowel), type = "norm") +
+  scale_x_reverse(position = "top") + scale_y_reverse(position = "right") +
+  coord_fixed()
+```
 
 ```{r}
 #| label: dur-f1-dens
