@@ -11,6 +11,22 @@ bibliography: refs.bib
 
 # Introduction
 
+## Research hypotheses
+
+![Directed Acyclic Graphs of two models of vowel duration.](../../img/vdur-dags.png)
+
+According to the gesture-duration model, vowel duration should be modulated entirely by F1 (as a proxy to the vocalic gesture).
+In other words, vowel quality should be independent of vowel duration, once controlling for F1.
+In the two-pronged model, vowel quality and vowel duration should not be independent.
+In other words, once the modulating effect of F1 on vowel duration is controlled for, vowel quality should still modulate vowel duration.
+
+The different expectations of each model allows us to assess the following hypotheses:
+
+1. **Gesture-duration model**: The effect of vowel quality on vowel duration is 0, after controlling for F1.
+2. **Two-pronged model**: The effect of vowel quality is not 0, after controlling for F1.
+
+
+
 # Methods
 
 The data used in this study come from a study which focussed on durational properties of voiced intervals in Italian.
@@ -73,7 +89,17 @@ According to the model, the predicted 90% CrI of the F1 effect on vowel duration
 All vowels except /u/ show a robust positive effect of F1 on vowel duration.
 The effect of /u/ is much more uncertain, with both negative and positive values, although the 90% CrI covers double the negative values perhaps suggesting a small negative effect.
 
+![Predicted vowel duration by F1 and vowel (based on Bayesian linear modelling).](../../img/bm1-pred-plot-ms-hz.png)
 
+## Non-linear modelling
+
+The results from linear modelling suggest a potential pattern related to vowel height: the highest vowel /u/ has almost no effect of F1 on vowel duration (or if it does it's very small and possibly negative), the second highest /i/ has a positive effect which is smaller than that of the other vowels, with /e, ɔ/ having an intermediate effect and /a/, the lowest vowel, the bigger effect.
+
+This pattern of increasing F1 effect from highest to lowest vowel suggest that the effect is modulated by the specific F1 value.
+In other words, the effect of F1 on vowel duration is not linear: when F1 is low the effect is smaller, when F1 is high the effect is bigger.
+In terms of statistical modelling, this type of modulation (of the effect of a predictor depending on the value of the predictor itself) can be achieved with non-linear models, such as Generalised Additive (Mixed) Models (GAMMs).
+
+A GAMM was fitted with a Gaussian distribution to standardised logged vowel duration (*z*-scores) with the following predictor terms: a parametric effect of vowel (to model differences in average vowel duration by vowel), a smooth term over standardised F1 (to model the non-linear effect of F1) and a factor smooth interaction over F1 by speaker with vowel as a by-variable (to model by-speaker differences).
 
 # References
 
