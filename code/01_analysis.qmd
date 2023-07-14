@@ -18,6 +18,8 @@ library(marginaleffects)
 library(ggdist)
 library(mgcv)
 library(tidygam)
+
+my_seed <- 9899
 ```
 
 ## Read data
@@ -172,31 +174,19 @@ bm_1_draws <- as_draws_df(bm_1) %>%
 quantile(bm_1_draws$b_vowel5, probs = c(0.05, 0.95))
 ```
 
+### Model plotting
+
 ```{r}
 #| label: bm-1-cond
 
 conditional_effects(bm_1, "f13_z:vowel", prob = 0.9)
+```
+
+```{r}
+#| label: bm-1-cond-spag
+
 conditional_effects(bm_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100, prob = 0.9)
 ```
-
-
-```{r}
-#| label: bm-1-comp
-
-avg_comparisons(bm_1, variables = "f13_z", conf_level = 0.9)
-avg_comparisons(bm_1, variables = "f13_z", by = "vowel", conf_level = 0.9)
-```
-
-```{r}
-#| label: bm-1-comp
-
-avg_predictions(bm_1, by = "vowel", conf_level = 0.9) %>%
-  as_tibble() %>%
-  mutate_if(
-    is.numeric, function (x) {exp(x * sd(formants$duration_log) + mean(formants$duration_log))}
-  )
-```
-
 
 We need to get the predicted draws to convert duration and F1 back to ms and hz. Note that duration was logged then scaled.
 
@@ -232,7 +222,6 @@ vmean_f13z <- formants %>%
   group_by(vowel) %>%
   summarise(f13z_mean = mean(f13_z))
 ```
-
 
 We can now plot the model predictions in the original scale.
 
@@ -285,6 +274,8 @@ bm_1_preds %>%
   scale_fill_viridis_d() +
   scale_colour_viridis_d() +
   theme(legend.position = "none")
+
+ggsave("img/bm1-pred-plot-ms-hz.png", width = 7, height = 5)
 ```
 
 But let's also plot this in the standardised logged duration scale.
@@ -302,6 +293,33 @@ bm_1_preds %>%
   facet_wrap(~vowel) +
   scale_fill_viridis_d()
 ```
+
+### Average predictions and comparisons
+
+```{r}
+#| label: bm-1-comp
+
+avg_comparisons(bm_1, variables = "f13_z", conf_level = 0.9)
+```
+
+```{r}
+#| label: bm-1-comp-vow
+
+avg_comparisons(bm_1, variables = "f13_z", by = "vowel", conf_level = 0.9)
+```
+
+```{r}
+#| label: bm-1-comp
+
+avg_predictions(bm_1, by = "vowel", conf_level = 0.9) %>%
+  as_tibble() %>%
+  mutate_if(
+    is.numeric, function (x) {exp(x * sd(formants$duration_log) + mean(formants$duration_log))}
+  )
+```
+
+### Group-level effects
+
 ```{r}
 #| label: bm-1-ranef
 
@@ -357,6 +375,18 @@ predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100) %>%
   facet_wrap(~vowel)
 ```
 
+```{r}
+#| label: gam-2
+
+gam_2 <- bam(
+  duration_logz ~
+    vowel +
+    s(f13_z, k = 3) +
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 3),
+  data = formants
+)
+```
+
 ### BRM
 
 ```{r}
@@ -365,15 +395,15 @@ predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100) %>%
 priors_s <- c(
   prior(normal(0, 1), class = Intercept),
   prior(normal(0, 1), class = b),
-  prior(cauchy(0, 0.1), class = sigma),
-  prior(cauchy(0, 0.1), class = sds)
+  prior(cauchy(0, 0.01), class = sigma),
+  prior(cauchy(0, 1), class = sds)
 )
 
-bms_1 <- brm(
+bms_1_priors <- brm(
   duration_logz ~
     vowel +
-    s(f13_z) +
-    s(f13_z, speaker, by = vowel, bs = "fs", m = 1),
+    s(f13_z, k = 5) +
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 5),
   family = gaussian,
   data = formants,
   prior = priors_s,
@@ -382,18 +412,20 @@ bms_1 <- brm(
   threads = threading(2),
   backend = "cmdstanr",
   file = "data/cache/bms_1_priors",
+  seed = my_seed
 )
 ```
 
 ```{r}
 #| label: bms-1-priors-plot
 
-conditional_effects(bms_1, "f13_z:vowel")
-conditional_effects(bms_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100)
+conditional_effects(bms_1_priors, "f13_z:vowel")
+conditional_effects(bms_1_priors, "f13_z:vowel", spaghetti = TRUE, ndraws = 100)
 ```
 
 We specify `k = 5` based on the mgcv modelling above. Reducing `k` speeds up estimation (because there are less basis functions, hence less parameters to estimate).
 
+The model takes about 4-5 hours to run on 8 cores.
 
 ```{r}
 #| label: bms-1
@@ -407,9 +439,12 @@ bms_1 <- brm(
   data = formants,
   prior = priors_s,
   cores = 4,
+  iter = 4000,
+  control = list(adapt_delta = 0.9999),
   threads = threading(2),
   backend = "cmdstanr",
-  file = "data/cache/bms_1"
+  file = "data/cache/bms_1",
+  seed = my_seed
 )
 ```
 
@@ -419,6 +454,48 @@ bms_1 <- brm(
 plot(conditional_effects(bms_1, "f13_z:vowel"), plot = FALSE)[[1]] + facet_wrap(~vowel)
 plot(conditional_effects(bms_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100), plot = FALSE)[[1]] + facet_wrap(~vowel)
 ```
+
+Let's plot on the original scale.
+
+```{r}
+#| label: bms-1-preds
+
+bms_1_grid <- expand_grid(
+  vowel = levels(formants$vowel),
+  f13_z = seq_minmax(formants$f13_z, 0.25),
+  speaker = NA
+)
+
+bms_1_preds <- epred_draws(bms_1, newdata = bms_1_grid, re_formula = NA) %>%
+  mutate(
+    duration_log = .epred * sd(formants$duration_log) + mean(formants$duration_log),
+    duration = exp(duration_log),
+    f13 = f13_z * sd(formants$f13) + mean(formants$f13)
+  )
+```
+
+```{r}
+#| label: bms1-pred-plot-ms-hz
+
+bms_1_preds %>%
+  group_by(vowel, f13) %>%
+  ggplot(aes(f13, duration, fill = vowel)) +
+  stat_ribbon(.width = 0.98, alpha = 0.2) +
+  stat_ribbon(.width = 0.9, alpha = 0.4) +
+  stat_lineribbon(.width = 0.6, alpha = 0.8) +
+  geom_vline(data = vmean_f13, aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
+  geom_rug(data = formants, alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
+  facet_wrap(~vowel) +
+  labs(
+    x = "F1 (Hz)", y = "Duration (ms)"
+  ) +
+  scale_fill_viridis_d() +
+  scale_colour_viridis_d() +
+  theme(legend.position = "none")
+
+ggsave("img/bms1-pred-plot-ms-hz.png", width = 7, height = 5)
+```
+
 
 ### F1 and F2
 
