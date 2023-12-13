@@ -1,5 +1,12 @@
 ---
-title: "vow-height"
+title: "Analysis of intrinsic vowel duration in Northwestern Italian"
+author: "Stefano Coretta"
+date: today
+execute: 
+  cache: true
+format:
+  html: default
+  pdf: default
 ---
 
 ## Attach packages
@@ -46,7 +53,7 @@ contrasts(formants$vowel) <- "contr.sum"
 ## Plotting
 
 ```{r}
-#| label: vowel-plot
+#| label: vowel-plot-1
 
 formants %>%
   group_by(speaker) %>%
@@ -62,7 +69,7 @@ formants %>%
 ```
 
 ```{r}
-#| label: vowel-plot
+#| label: vowel-plot-2
 
 formants %>%
   group_by(speaker) %>%
@@ -173,6 +180,21 @@ bm_1_draws <- as_draws_df(bm_1) %>%
   )
 
 quantile(bm_1_draws$b_vowel5, probs = c(0.05, 0.95))
+```
+
+```{r bm-1-coef-table}
+bm_1 %>%
+  as_draws_df() %>%
+  select(b_vowel1:b_vowel4) %>%
+  pivot_longer(b_vowel1:b_vowel4) %>%
+  group_by(name) %>%
+  summarise(
+      cri95 = list(round(quantile2(value, probs = c(0.025, 0.975)), 2)),
+      cri90 = list(round(quantile2(value, probs = c(0.05, 0.95)), 2)),
+      cri80 = list(round(quantile2(value, probs = c(0.1, 0.9)), 2)),
+      cri60 = list(round(quantile2(value, probs = c(0.2, 0.8)), 2))
+  ) %>%
+  knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
 ### Model plotting
@@ -298,7 +320,7 @@ bm_1_preds %>%
 ### Average predictions and comparisons
 
 ```{r}
-#| label: bm-1-comp
+#| label: bm-1-avg-pred
 
 avg_comparisons(bm_1, variables = "f13_z", conf_level = 0.9)
 ```
@@ -374,18 +396,6 @@ predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100) %>%
   geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   facet_wrap(~vowel)
-```
-
-```{r}
-#| label: gam-2
-
-gam_2 <- bam(
-  duration_logz ~
-    vowel +
-    s(f13_z, k = 3) +
-    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 3),
-  data = formants
-)
 ```
 
 ### BRM
