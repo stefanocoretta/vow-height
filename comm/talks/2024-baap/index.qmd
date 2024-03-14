@@ -1,0 +1,37 @@
+---
+title: "Is vowel duration the product of gestural timing alone? Data from Northwestern Italian"
+author: "Stefano Coretta"
+institute: "University of Edinburgh"
+format: mono-light-revealjs
+editor: visual
+filters:
+  - tachyonsextra
+---
+
+## Intrinsic vowel duration
+
+![](images/intrinsic.png){fig-align="center"}
+
+## Distance to travel = duration
+
+![](images/eke-aka-01.png){fig-align="center"}
+
+\[Figure from Ladefoged 1996.\]
+
+On the distance hypothesis, see for example Turk et al 1994.
+
+## Phonologisation
+
+::: box-note
+**Phonologisation**
+
+When the speaker gains control over a mechanical/physiological process (and the process "enters the phonetics" of the language).
+
+--Bermúdez-Otero 2013
+:::
+
+## Phonologisation of intrinsic duration
+
+![](images/intrinsic-phonologised.png){fig-align="center" width="256"}
+
+(Toivonen et al. 2015)
