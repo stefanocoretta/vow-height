@@ -20,6 +20,12 @@ filters:
 
 On the distance hypothesis, see for example Turk et al 1994.
 
+## (A) Distance hypothesis
+
+![](images/dag-a.png){fig-align="center"}
+
+**Full mediation**
+
 ## Phonologisation
 
 ::: box-note
@@ -35,3 +41,39 @@ When the speaker gains control over a mechanical/physiological process (and the 
 ![](images/intrinsic-phonologised.png){fig-align="center" width="256"}
 
 (Toivonen et al. 2015)
+
+## (B) Phonologisation hypothesis
+
+![](images/dag-b.png){fig-align="center"}
+
+**No mediation**
+
+## Process scattering
+
+::: box-note
+**Process scattering**
+
+Process (or rule) scattering is the scenario in which the same process coexists in two different levels of language.
+
+--Bermúdez-Otero 2013
+:::
+
+## (C) Process scattering hypothesis
+
+![](images/dag-c.png){fig-align="center"}
+
+**Partial mediation**
+
+## Hypotheses
+
+![](images/vdur-dags-3.png){fig-align="center"}
+
+<br>
+
+\(a\) Full mediation.
+
+\(b\) No mediation.
+
+\(c\) Partial mediation.
+
+## Methods

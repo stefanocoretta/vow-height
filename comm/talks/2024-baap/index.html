@@ -9,7 +9,7 @@
 <link href="index_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <link href="index_files/libs/quarto-contrib/tachyonsextra-0.0.1/tachyonsextra.css" rel="stylesheet"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.550">
+  <meta name="generator" content="quarto-1.4.551">
 
   <meta name="author" content="Stefano Coretta">
   <title>Is vowel duration the product of gestural timing alone? Data from Northwestern Italian</title>
@@ -351,6 +351,11 @@ Stefano Coretta
 <img data-src="images/eke-aka-01.png" class="quarto-figure quarto-figure-center r-stretch"><p>[Figure from Ladefoged 1996.]</p>
 <p>On the distance hypothesis, see for example Turk et al 1994.</p>
 </section>
+<section id="a-distance-hypothesis" class="slide level2">
+<h2>(A) Distance hypothesis</h2>
+
+<img data-src="images/dag-a.png" class="quarto-figure quarto-figure-center r-stretch"><p><strong>Full mediation</strong></p>
+</section>
 <section id="phonologisation" class="slide level2">
 <h2>Phonologisation</h2>
 <div class="box-note">
@@ -363,6 +368,32 @@ Stefano Coretta
 <h2>Phonologisation of intrinsic duration</h2>
 
 <img data-src="images/intrinsic-phonologised.png" class="quarto-figure quarto-figure-center r-stretch" width="256"><p>(Toivonen et al.&nbsp;2015)</p>
+</section>
+<section id="b-phonologisation-hypothesis" class="slide level2">
+<h2>(B) Phonologisation hypothesis</h2>
+
+<img data-src="images/dag-b.png" class="quarto-figure quarto-figure-center r-stretch"><p><strong>No mediation</strong></p>
+</section>
+<section id="process-scattering" class="slide level2">
+<h2>Process scattering</h2>
+<div class="box-note">
+<p><strong>Process scattering</strong></p>
+<p>Process (or rule) scattering is the scenario in which the same process coexists in two different levels of language.</p>
+<p>–Bermúdez-Otero 2013</p>
+</div>
+</section>
+<section id="c-process-scattering-hypothesis" class="slide level2">
+<h2>(C) Process scattering hypothesis</h2>
+
+<img data-src="images/dag-c.png" class="quarto-figure quarto-figure-center r-stretch"><p><strong>Partial mediation</strong></p>
+</section>
+<section id="hypotheses" class="slide level2">
+<h2>Hypotheses</h2>
+
+<img data-src="images/vdur-dags-3.png" class="quarto-figure quarto-figure-center r-stretch"><p><br></p>
+<p>(a) Full mediation.</p>
+<p>(b) No mediation.</p>
+<p>(c) Partial mediation.</p>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
@@ -655,6 +686,24 @@ Stefano Coretta
         // clear code selection
         e.clearSelection();
       });
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
       function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
         const config = {
           allowHTML: true,
@@ -691,7 +740,11 @@ Stefano Coretta
           try { href = new URL(href).hash; } catch {}
           const id = href.replace(/^#\/?/, "");
           const note = window.document.getElementById(id);
-          return note.innerHTML;
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
         });
       }
       const findCites = (el) => {
