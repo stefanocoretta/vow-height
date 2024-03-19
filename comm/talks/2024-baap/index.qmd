@@ -77,3 +77,81 @@ Process (or rule) scattering is the scenario in which the same process coexists 
 \(c\) Partial mediation.
 
 ## Methods
+
+::: box-note
+-   Pre-existing data: <https://osf.io/xdgfz/>.
+
+-   19 speakers of Northwestern Italian (Verbano-Cusio-Ossola).
+
+-   CVCo words (mostly nonce, some real), in 5 frame sentences.
+
+    -   C = /p, t, k/, all permutations.
+
+    -   V = /a, e, i, ɔ, u/.
+:::
+
+. . .
+
+::: box-tip
+-   Vowel duration: from appearance of F2/3 to disappearance of F2/3.
+
+-   F1/F2 measurements from [FastTrack](https://github.com/santiagobarreda/FastTrack) (Barreda 2021).
+:::
+
+. . .
+
+::: box-note
+-   Causal Inference (McElreath 2019).
+
+-   Bayesian models fitted with [brms](https://paul-buerkner.github.io/brms/) (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).
+:::
+
+## Hypotheses (revisited)
+
+::: box-warning
+In a model with vowel and F1 as predictors:
+
+-   \(a\) Full mediation
+
+    -   The effect of vowel should be (practically) 0.
+
+-   \(b\) No mediation
+
+    -   The effect of F1 should be (practically) 0.
+
+-   \(c\) Partial mediation
+
+    -   The effect of both vowel and F1 should not be (practically) 0.
+:::
+
+## Results
+
+![](images/bms1-pred-plot-ms-hz.png){fig-align="center"}
+
+## Interpretation
+
+::: box-note
+-   There is a **robust effect of F1** and the effect is **non-linear**.
+
+    -   Negative up to 400 Hz, positive from 450 Hz.
+
+-   There is a **robust effect of vowel**.
+
+    -   F1 alone is not sufficient to explain vowel duration.
+:::
+
+. . .
+
+::: box-tip
+**The results are compatible with the (c) Partial Mediation hypothesis.**
+:::
+
+. . .
+
+::: box-note
+This means that:
+
+-   Each vowel must have a duration target.
+
+-   Distance to target explains duration within each vowel category.
+:::

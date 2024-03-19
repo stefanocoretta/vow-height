@@ -8,3 +8,6 @@ The file `code/01_analysis.qmd` includes code of the analysis of the paper *Intr
 
 The data used in `code/01_analysis.qmd` are available through the R package <https://github.com/stefanocoretta/coretta2018itaegg>.
 
+## Talks
+
+- [BAAP 2024](comm/talks/2024-baap/)

@@ -394,9 +394,92 @@ Stefano Coretta
 <p>(a) Full mediation.</p>
 <p>(b) No mediation.</p>
 <p>(c) Partial mediation.</p>
+</section>
+<section id="methods" class="slide level2">
+<h2>Methods</h2>
+<div class="box-note">
+<ul>
+<li><p>Pre-existing data: <a href="https://osf.io/xdgfz/" class="uri">https://osf.io/xdgfz/</a>.</p></li>
+<li><p>19 speakers of Northwestern Italian (Verbano-Cusio-Ossola).</p></li>
+<li><p>CVCo words (mostly nonce, some real), in 5 frame sentences.</p>
+<ul>
+<li><p>C = /p, t, k/, all permutations.</p></li>
+<li><p>V = /a, e, i, ɔ, u/.</p></li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="box-tip">
+<ul>
+<li><p>Vowel duration: from appearance of F2/3 to disappearance of F2/3.</p></li>
+<li><p>F1/F2 measurements from <a href="https://github.com/santiagobarreda/FastTrack">FastTrack</a> (Barreda 2021).</p></li>
+</ul>
+</div>
+</div>
+<div class="fragment">
+<div class="box-note">
+<ul>
+<li><p>Causal Inference (McElreath 2019).</p></li>
+<li><p>Bayesian models fitted with <a href="https://paul-buerkner.github.io/brms/">brms</a> (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).</p></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="hypotheses-revisited" class="slide level2">
+<h2>Hypotheses (revisited)</h2>
+<div class="box-warning">
+<p>In a model with vowel and F1 as predictors:</p>
+<ul>
+<li><p>(a) Full mediation</p>
+<ul>
+<li>The effect of vowel should be (practically) 0.</li>
+</ul></li>
+<li><p>(b) No mediation</p>
+<ul>
+<li>The effect of F1 should be (practically) 0.</li>
+</ul></li>
+<li><p>(c) Partial mediation</p>
+<ul>
+<li>The effect of both vowel and F1 should not be (practically) 0.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="results" class="slide level2">
+<h2>Results</h2>
+
+<img data-src="images/bms1-pred-plot-ms-hz.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="interpretation" class="slide level2">
+<h2>Interpretation</h2>
+<div class="box-note">
+<ul>
+<li><p>There is a <strong>robust effect of F1</strong> and the effect is <strong>non-linear</strong>.</p>
+<ul>
+<li>Negative up to 400 Hz, positive from 450 Hz.</li>
+</ul></li>
+<li><p>There is a <strong>robust effect of vowel</strong>.</p>
+<ul>
+<li>F1 alone is not sufficient to explain vowel duration.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="box-tip">
+<p><strong>The results are compatible with the (c) Partial Mediation hypothesis.</strong></p>
+</div>
+</div>
+<div class="fragment">
+<div class="box-note">
+<p>This means that:</p>
+<ul>
+<li><p>Each vowel must have a duration target.</p></li>
+<li><p>Distance to target explains duration within each vowel category.</p></li>
+</ul>
+</div>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
+</div>
 </div>
 </div>
 </section>
