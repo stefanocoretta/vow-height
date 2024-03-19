@@ -2,7 +2,9 @@
 title: "Is vowel duration the product of gestural timing alone? Data from Northwestern Italian"
 author: "Stefano Coretta"
 institute: "University of Edinburgh"
-format: mono-light-revealjs
+format:
+  mono-light-revealjs:
+    history: false
 editor: visual
 filters:
   - tachyonsextra
@@ -155,3 +157,4 @@ This means that:
 
 -   Distance to target explains duration within each vowel category.
 :::
+
