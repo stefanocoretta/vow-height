@@ -14,7 +14,7 @@ filters:
 
 ![](images/intrinsic.png){fig-align="center"}
 
-## Distance to travel = duration
+## Distance to target = duration
 
 ![](images/eke-aka-01.png){fig-align="center"}
 
@@ -22,11 +22,17 @@ filters:
 
 On the distance hypothesis, see for example Turk et al 1994.
 
+##   {background-color="var(--inverse)"}
+
+::: f1
+**Acoustics (F1) as a proxy for distance to target**
+:::
+
 ## (A) Distance hypothesis
 
 ![](images/dag-a.png){fig-align="center"}
 
-**Full mediation**
+**Full mediation** (the effect of vowel is fully mediated by F1)
 
 ## Phonologisation
 
@@ -38,6 +44,8 @@ When the speaker gains control over a mechanical/physiological process (and the 
 --Bermúdez-Otero 2013
 :::
 
+![](images/life-cycle.png){fig-align="center"}
+
 ## Phonologisation of intrinsic duration
 
 ![](images/intrinsic-phonologised.png){fig-align="center" width="256"}
@@ -48,23 +56,31 @@ When the speaker gains control over a mechanical/physiological process (and the 
 
 ![](images/dag-b.png){fig-align="center"}
 
-**No mediation**
+**No mediation** (vowel and F1 independently affect duration)
 
 ## Process scattering
 
 ::: box-note
 **Process scattering**
 
-Process (or rule) scattering is the scenario in which the same process coexists in two different levels of language.
+Process (or rule) scattering is the scenario by which a process coexists in multiple levels of the language.
 
 --Bermúdez-Otero 2013
+:::
+
+. . .
+
+::: box-tip
+**Process scattering (revised)**
+
+Process scattering is the scenario by which two versions of the same process coexist in the language, either in the same level or in consecutive levels.
 :::
 
 ## (C) Process scattering hypothesis
 
 ![](images/dag-c.png){fig-align="center"}
 
-**Partial mediation**
+**Partial mediation** (vowel has a direct and mediated effect on duration)
 
 ## Hypotheses
 
@@ -108,7 +124,7 @@ Process (or rule) scattering is the scenario in which the same process coexists 
 -   Bayesian models fitted with [brms](https://paul-buerkner.github.io/brms/) (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).
 :::
 
-## Hypotheses (revisited)
+## Hypotheses (rep.)
 
 ::: box-warning
 In a model with vowel and F1 as predictors:
@@ -145,7 +161,7 @@ In a model with vowel and F1 as predictors:
 . . .
 
 ::: box-tip
-**The results are compatible with the (c) Partial Mediation hypothesis.**
+**The results are compatible with the (c) Partial Mediation hypothesis (Process Scattering).**
 :::
 
 . . .
@@ -153,8 +169,7 @@ In a model with vowel and F1 as predictors:
 ::: box-note
 This means that:
 
--   Each vowel must have a duration target.
+-   Each vowel must have its **own duration target**.
 
--   Distance to target explains duration within each vowel category.
+-   Within each vowel category, **distance to target further modulates duration**.
 :::
-
