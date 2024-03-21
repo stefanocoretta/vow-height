@@ -30,6 +30,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -343,81 +408,111 @@ Stefano Coretta
 </section>
 <section id="intrinsic-vowel-duration" class="slide level2">
 <h2>Intrinsic vowel duration</h2>
-
-<img data-src="images/intrinsic.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="distance-to-target-duration" class="slide level2">
-<h2>Distance to target = duration</h2>
-
-<img data-src="images/eke-aka-01.png" class="quarto-figure quarto-figure-center r-stretch"><p>[Figure from Ladefoged 1996.]</p>
-<p>On the distance hypothesis, see for example Turk et al 1994.</p>
-</section>
-<section id="section" class="slide level2" data-background-color="var(--inverse)">
-<h2></h2>
-<div class="f1">
-<p><strong>Acoustics (F1) as a proxy for distance to target</strong></p>
+<div class="box-note f2">
+<p><strong>High vowels tend to be shorter than low vowels.</strong></p>
 </div>
-</section>
-<section id="a-distance-hypothesis" class="slide level2">
-<h2>(A) Distance hypothesis</h2>
-
-<img data-src="images/dag-a.png" class="quarto-figure quarto-figure-center r-stretch"><p><strong>Full mediation</strong> (the effect of vowel is fully mediated by F1)</p>
-</section>
-<section id="phonologisation" class="slide level2">
-<h2>Phonologisation</h2>
-<div class="box-note">
-<p><strong>Phonologisation</strong></p>
-<p>When the speaker gains control over a mechanical/physiological process (and the process “enters the phonetics” of the language).</p>
-<p>–Bermúdez-Otero 2013</p>
-</div>
-
-<img data-src="images/life-cycle.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="phonologisation-of-intrinsic-duration" class="slide level2">
-<h2>Phonologisation of intrinsic duration</h2>
-
-<img data-src="images/intrinsic-phonologised.png" class="quarto-figure quarto-figure-center r-stretch" width="256"><p>(Toivonen et al.&nbsp;2015)</p>
-</section>
-<section id="b-phonologisation-hypothesis" class="slide level2">
-<h2>(B) Phonologisation hypothesis</h2>
-
-<img data-src="images/dag-b.png" class="quarto-figure quarto-figure-center r-stretch"><p><strong>No mediation</strong> (vowel and F1 independently affect duration)</p>
-</section>
-<section id="process-scattering" class="slide level2">
-<h2>Process scattering</h2>
-<div class="box-note">
-<p><strong>Process scattering</strong></p>
-<p>Process (or rule) scattering is the scenario by which a process coexists in multiple levels of the language.</p>
-<p>–Bermúdez-Otero 2013</p>
-</div>
-<div class="fragment">
 <div class="box-tip">
-<p><strong>Process scattering (revised)</strong></p>
-<p>Process scattering is the scenario by which two versions of the same process coexist in the language, either in the same level or in consecutive levels.</p>
+<p><strong>American English</strong> in Lieberman and Kubaska 1979, Turk et al.&nbsp;1994, Tauberer and Evanini 2009, Toivonen et al.&nbsp;2015, Wilson and Chodroff 2017; <strong>Dutch</strong> in Bundgaard 1980; <strong>Swedish</strong> in Toivonen et al.&nbsp;2015.</p>
+</div>
+</section>
+<section id="source-of-intrinsic-vowel-duration" class="slide level2">
+<h2>Source of intrinsic vowel duration</h2>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-dist" class="quarto-figure quarto-figure-center quarto-float" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="images/intrinsic.png" class="quarto-figure quarto-figure-center" height="450">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Distance to target (Turk et al.&nbsp;1994)
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-phon" class="quarto-figure quarto-figure-center quarto-float" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-phon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="images/intrinsic-phonologised.png" class="quarto-figure quarto-figure-center" height="450">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-phon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Phonologisation (Toivonen et al.&nbsp;2015)
+</figcaption>
+</figure>
+</div>
+</div>
 </div>
 </div>
 </section>
-<section id="c-process-scattering-hypothesis" class="slide level2">
-<h2>(C) Process scattering hypothesis</h2>
+<section id="source-of-intrinsic-vowel-duration-1" class="slide level2">
+<h2>Source of intrinsic vowel duration</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<div class="box-tip">
+<p><strong>Turk et al.&nbsp;1994</strong></p>
+<ul>
+<li>American English</li>
+<li>1 speaker</li>
+<li>/e, ɛ, æ, ɑ, ʌ/</li>
+</ul>
+</div>
+</div><div class="column" style="width:10%;">
 
-<img data-src="images/dag-c.png" class="quarto-figure quarto-figure-center r-stretch"><p><strong>Partial mediation</strong> (vowel has a direct and mediated effect on duration)</p>
+</div><div class="column" style="width:40%;">
+<div class="box-tip">
+<p><strong>Toivonen et al 2015</strong></p>
+<ul>
+<li>“English”
+<ul>
+<li>3 speakers</li>
+<li><em>miss mess mass bit bet bat</em></li>
+</ul></li>
+<li>“Swedish”
+<ul>
+<li>2 speakers</li>
+<li><em>missa messa massa</em></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:40%;">
+<div class="box-note">
+<p>Correlation between distance to target and vowel duration.</p>
+</div>
+</div><div class="column" style="width:10%;">
+
+</div><div class="column" style="width:40%;">
+<div class="box-note">
+<p>No within-vowel correlation between F1 and vowel duration.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="hypotheses" class="slide level2">
 <h2>Hypotheses</h2>
 
 <img data-src="images/vdur-dags-3.png" class="quarto-figure quarto-figure-center r-stretch"><p><br></p>
-<p>(a) Full mediation.</p>
-<p>(b) No mediation.</p>
-<p>(c) Partial mediation.</p>
+<div class="box-error">
+<p><strong>(a) Distance to target</strong>: The effect of vowel should be 0 (Turk et al.&nbsp;1994).</p>
+<p><strong>(b) Phonologisation</strong>: The effect of F1 should be 0 (Toivonen et al.&nbsp;2015).</p>
+<p><strong>(c) Hybrid</strong>: There should be both an effect of vowel and F1.</p>
+</div>
 </section>
 <section id="methods" class="slide level2">
 <h2>Methods</h2>
 <div class="box-note">
 <ul>
-<li><p>Pre-existing data: <a href="https://osf.io/xdgfz/" class="uri">https://osf.io/xdgfz/</a>.</p></li>
-<li><p>19 speakers of Northwestern Italian (Verbano-Cusio-Ossola).</p></li>
+<li><p>Pre-existing acoustic data: <a href="https://osf.io/xdgfz/" class="uri">https://osf.io/xdgfz/</a>.</p></li>
+<li><p><strong>19 speakers</strong> of Northwestern Italian (Verbano-Cusio-Ossola).</p></li>
 <li><p>CVCo words (mostly nonce, some real), in 5 frame sentences.</p>
 <ul>
 <li><p>C = /p, t, k/, all permutations.</p></li>
 <li><p>V = /a, e, i, ɔ, u/.</p></li>
+<li><p><strong>~855 tokens per vowel</strong>.</p></li>
 </ul></li>
 </ul>
 </div>
@@ -433,29 +528,10 @@ Stefano Coretta
 <div class="box-note">
 <ul>
 <li><p>Causal Inference (McElreath 2019).</p></li>
-<li><p>Bayesian models fitted with <a href="https://paul-buerkner.github.io/brms/">brms</a> (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).</p></li>
+<li><p>Bayesian model fitted with <a href="https://paul-buerkner.github.io/brms/">brms</a> (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).</p></li>
 </ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>duration_logz <span class="sc">~</span> vowel <span class="sc">+</span> <span class="fu">s</span>(f13_z, <span class="at">k =</span> <span class="dv">5</span>) <span class="sc">+</span> <span class="fu">s</span>(f13_z, speaker, <span class="at">by =</span> vowel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</section>
-<section id="hypotheses-rep." class="slide level2">
-<h2>Hypotheses (rep.)</h2>
-<div class="box-warning">
-<p>In a model with vowel and F1 as predictors:</p>
-<ul>
-<li><p>(a) Full mediation</p>
-<ul>
-<li>The effect of vowel should be (practically) 0.</li>
-</ul></li>
-<li><p>(b) No mediation</p>
-<ul>
-<li>The effect of F1 should be (practically) 0.</li>
-</ul></li>
-<li><p>(c) Partial mediation</p>
-<ul>
-<li>The effect of both vowel and F1 should not be (practically) 0.</li>
-</ul></li>
-</ul>
 </div>
 </section>
 <section id="results" class="slide level2">
@@ -478,7 +554,7 @@ Stefano Coretta
 </div>
 <div class="fragment">
 <div class="box-tip">
-<p><strong>The results are compatible with the (c) Partial Mediation hypothesis (Process Scattering).</strong></p>
+<p><strong>The results are compatible with (c) Hybrid hypothesis.</strong></p>
 </div>
 </div>
 <div class="fragment">
@@ -488,6 +564,56 @@ Stefano Coretta
 <li><p>Each vowel must have its <strong>own duration target</strong>.</p></li>
 <li><p>Within each vowel category, <strong>distance to target further modulates duration</strong>.</p></li>
 </ul>
+</div>
+</div>
+</section>
+<section id="the-end" class="slide level2">
+<h2>The end</h2>
+<p><br></p>
+<div class="f2">
+<p>V’a rringraziu! (Calabrese)</p>
+<p>A vi ringrazi a tücc! (Lombard)</p>
+</div>
+<p><br></p>
+<p>Research compendium: <a href="https://github.com/stefanocoretta/vow-height" class="uri">https://github.com/stefanocoretta/vow-height</a>.</p>
+<p>Submitted manuscript: <a href="https://osf.io/preprints/osf/83afz" class="uri">https://osf.io/preprints/osf/83afz</a>.</p>
+<p>Bibliography: <a href="https://stefanocoretta.github.io/biblio/" class="uri">https://stefanocoretta.github.io/biblio/</a>.</p>
+</section>
+<section id="appendix" class="slide level2 center" data-background-color="var(--inverse)">
+<h2>APPENDIX</h2>
+<div class="cell">
+<style type="text/css">
+.center h2 {
+  text-align: center;
+  font-size: 4em;
+}
+</style>
+</div>
+</section>
+<section id="distance-to-target" class="slide level2">
+<h2>Distance to target</h2>
+
+<img data-src="images/eke-aka-01.png" class="r-stretch quarto-figure-center"><p class="caption">From Ladefoged 1996</p></section>
+<section id="phonologisation" class="slide level2">
+<h2>Phonologisation</h2>
+<div class="box-note">
+<p><strong>Phonologisation</strong></p>
+<p>When the speaker gains control over a mechanical/physiological process (and the process “enters the phonetics” of the language).</p>
+<p>–Bermúdez-Otero 2013</p>
+</div>
+
+<img data-src="images/life-cycle.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="process-scattering" class="slide level2">
+<h2>Process scattering</h2>
+<div class="box-note">
+<p><strong>Process scattering</strong></p>
+<p>Process (or rule) scattering is the scenario by which a process coexists in multiple levels of the language.</p>
+<p>–Bermúdez-Otero 2013</p>
+</div>
+<div class="fragment">
+<div class="box-tip">
+<p><strong>Process scattering (revised)</strong></p>
+<p>Process scattering is the scenario by which two versions of the same process coexist in the language, either in the same level or in consecutive levels.</p>
 </div>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
@@ -706,6 +832,44 @@ Stefano Coretta
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {

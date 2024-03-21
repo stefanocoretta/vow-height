@@ -8,79 +8,88 @@ format:
 editor: visual
 filters:
   - tachyonsextra
+engine: knitr
 ---
 
 ## Intrinsic vowel duration
 
-![](images/intrinsic.png){fig-align="center"}
-
-## Distance to target = duration
-
-![](images/eke-aka-01.png){fig-align="center"}
-
-\[Figure from Ladefoged 1996.\]
-
-On the distance hypothesis, see for example Turk et al 1994.
-
-##   {background-color="var(--inverse)"}
-
-::: f1
-**Acoustics (F1) as a proxy for distance to target**
+::: {.box-note .f2}
+**High vowels tend to be shorter than low vowels.**
 :::
-
-## (A) Distance hypothesis
-
-![](images/dag-a.png){fig-align="center"}
-
-**Full mediation** (the effect of vowel is fully mediated by F1)
-
-## Phonologisation
-
-::: box-note
-**Phonologisation**
-
-When the speaker gains control over a mechanical/physiological process (and the process "enters the phonetics" of the language).
-
---Bermúdez-Otero 2013
-:::
-
-![](images/life-cycle.png){fig-align="center"}
-
-## Phonologisation of intrinsic duration
-
-![](images/intrinsic-phonologised.png){fig-align="center" width="256"}
-
-(Toivonen et al. 2015)
-
-## (B) Phonologisation hypothesis
-
-![](images/dag-b.png){fig-align="center"}
-
-**No mediation** (vowel and F1 independently affect duration)
-
-## Process scattering
-
-::: box-note
-**Process scattering**
-
-Process (or rule) scattering is the scenario by which a process coexists in multiple levels of the language.
-
---Bermúdez-Otero 2013
-:::
-
-. . .
 
 ::: box-tip
-**Process scattering (revised)**
-
-Process scattering is the scenario by which two versions of the same process coexist in the language, either in the same level or in consecutive levels.
+**American English** in Lieberman and Kubaska 1979, Turk et al. 1994, Tauberer and Evanini 2009, Toivonen et al. 2015, Wilson and Chodroff 2017; **Dutch** in Bundgaard 1980; **Swedish** in Toivonen et al. 2015.
 :::
 
-## (C) Process scattering hypothesis
+## Source of intrinsic vowel duration
 
-![](images/dag-c.png){fig-align="center"}
+::: {layout-ncol="2"}
+![Distance to target (Turk et al. 1994)](images/intrinsic.png){#fig-dist fig-align="center" height="450"}
 
-**Partial mediation** (vowel has a direct and mediated effect on duration)
+![Phonologisation (Toivonen et al. 2015)](images/intrinsic-phonologised.png){#fig-phon fig-align="center" height="450"}
+:::
+
+## Source of intrinsic vowel duration
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+::: box-tip 
+**Turk et al. 1994**
+
+- American English
+- 1 speaker
+- /e, ɛ, æ, ɑ, ʌ/
+:::
+
+:::
+
+::: {.column width="10%"}
+
+::: 
+
+::: {.column width="40%"}
+
+::: box-tip 
+**Toivonen et al 2015**
+
+- "English"
+  - 3 speakers
+  - *miss mess mass bit bet bat*
+- "Swedish"
+  - 2 speakers
+  - *missa messa massa*
+:::
+
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+::: box-note 
+Correlation between distance to target and vowel duration.
+:::
+
+:::
+
+::: {.column width="10%"}
+
+::: 
+
+::: {.column width="40%"}
+
+::: box-note 
+No within-vowel correlation between F1 and vowel duration.
+:::
+
+:::
+
+::::
+
 
 ## Hypotheses
 
@@ -88,24 +97,29 @@ Process scattering is the scenario by which two versions of the same process coe
 
 <br>
 
-\(a\) Full mediation.
+::: box-error
+**(a) Distance to target**: The effect of vowel should be 0 (Turk et al. 1994).
 
-\(b\) No mediation.
+**(b) Phonologisation**: The effect of F1 should be 0 (Toivonen et al. 2015).
 
-\(c\) Partial mediation.
+**(c) Hybrid**: There should be both an effect of vowel and F1.
+:::
+
 
 ## Methods
 
 ::: box-note
--   Pre-existing data: <https://osf.io/xdgfz/>.
+-   Pre-existing acoustic data: <https://osf.io/xdgfz/>.
 
--   19 speakers of Northwestern Italian (Verbano-Cusio-Ossola).
+-   **19 speakers** of Northwestern Italian (Verbano-Cusio-Ossola).
 
 -   CVCo words (mostly nonce, some real), in 5 frame sentences.
 
     -   C = /p, t, k/, all permutations.
 
     -   V = /a, e, i, ɔ, u/.
+    
+    - **~855 tokens per vowel**.
 :::
 
 . . .
@@ -121,26 +135,16 @@ Process scattering is the scenario by which two versions of the same process coe
 ::: box-note
 -   Causal Inference (McElreath 2019).
 
--   Bayesian models fitted with [brms](https://paul-buerkner.github.io/brms/) (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).
+-   Bayesian model fitted with [brms](https://paul-buerkner.github.io/brms/) (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).
+
+
+```r
+duration_logz ~ vowel + s(f13_z, k = 5) + s(f13_z, speaker, by = vowel)
+```
+
 :::
 
-## Hypotheses (rep.)
 
-::: box-warning
-In a model with vowel and F1 as predictors:
-
--   \(a\) Full mediation
-
-    -   The effect of vowel should be (practically) 0.
-
--   \(b\) No mediation
-
-    -   The effect of F1 should be (practically) 0.
-
--   \(c\) Partial mediation
-
-    -   The effect of both vowel and F1 should not be (practically) 0.
-:::
 
 ## Results
 
@@ -161,7 +165,7 @@ In a model with vowel and F1 as predictors:
 . . .
 
 ::: box-tip
-**The results are compatible with the (c) Partial Mediation hypothesis (Process Scattering).**
+**The results are compatible with (c) Hybrid hypothesis.**
 :::
 
 . . .
@@ -173,3 +177,65 @@ This means that:
 
 -   Within each vowel category, **distance to target further modulates duration**.
 :::
+
+## The end
+
+<br>
+
+::: f2
+V'a rringraziu! (Calabrese)
+
+A vi ringrazi a tücc! (Lombard)
+:::
+
+<br>
+
+Research compendium: <https://github.com/stefanocoretta/vow-height>.
+
+Submitted manuscript: <https://osf.io/preprints/osf/83afz>.
+
+Bibliography: <https://stefanocoretta.github.io/biblio/>.
+
+## APPENDIX {.center background-color="var(--inverse)"}
+
+```{css}
+.center h2 {
+  text-align: center;
+  font-size: 4em;
+}
+```
+
+## Distance to target
+
+![From Ladefoged 1996](images/eke-aka-01.png){fig-align="center"}
+
+## Phonologisation
+
+::: box-note
+**Phonologisation**
+
+When the speaker gains control over a mechanical/physiological process (and the process "enters the phonetics" of the language).
+
+--Bermúdez-Otero 2013
+:::
+
+![](images/life-cycle.png){fig-align="center"}
+
+## Process scattering
+
+::: box-note
+**Process scattering**
+
+Process (or rule) scattering is the scenario by which a process coexists in multiple levels of the language.
+
+--Bermúdez-Otero 2013
+:::
+
+. . .
+
+::: box-tip
+**Process scattering (revised)**
+
+Process scattering is the scenario by which two versions of the same process coexist in the language, either in the same level or in consecutive levels.
+:::
+
