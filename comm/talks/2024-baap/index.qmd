@@ -31,65 +31,50 @@ engine: knitr
 
 ## Source of intrinsic vowel duration
 
-:::: {.columns}
-
+::: columns
 ::: {.column width="40%"}
-
-::: box-tip 
+::: box-tip
 **Turk et al. 1994**
 
-- American English
-- 1 speaker
-- /e, ɛ, æ, ɑ, ʌ/
+-   American English
+-   1 speaker
+-   /e, ɛ, æ, ɑ, ʌ/
 :::
-
 :::
 
 ::: {.column width="10%"}
-
-::: 
+:::
 
 ::: {.column width="40%"}
-
-::: box-tip 
+::: box-tip
 **Toivonen et al 2015**
 
-- "English"
-  - 3 speakers
-  - *miss mess mass bit bet bat*
-- "Swedish"
-  - 2 speakers
-  - *missa messa massa*
+-   "English"
+    -   3 speakers
+    -   *miss mess mass bit bet bat*
+-   "Swedish"
+    -   2 speakers
+    -   *missa messa massa*
+:::
+:::
 :::
 
-:::
-
-::::
-
-:::: {.columns}
-
+::: columns
 ::: {.column width="40%"}
-
-::: box-note 
+::: box-note
 Correlation between distance to target and vowel duration.
 :::
-
 :::
 
 ::: {.column width="10%"}
-
-::: 
+:::
 
 ::: {.column width="40%"}
-
-::: box-note 
+::: box-note
 No within-vowel correlation between F1 and vowel duration.
 :::
-
 :::
-
-::::
-
+:::
 
 ## Hypotheses
 
@@ -105,7 +90,6 @@ No within-vowel correlation between F1 and vowel duration.
 **(c) Hybrid**: There should be both an effect of vowel and F1.
 :::
 
-
 ## Methods
 
 ::: box-note
@@ -118,8 +102,8 @@ No within-vowel correlation between F1 and vowel duration.
     -   C = /p, t, k/, all permutations.
 
     -   V = /a, e, i, ɔ, u/.
-    
-    - **~855 tokens per vowel**.
+
+    -   **\~855 tokens per vowel**.
 :::
 
 . . .
@@ -137,14 +121,10 @@ No within-vowel correlation between F1 and vowel duration.
 
 -   Bayesian model fitted with [brms](https://paul-buerkner.github.io/brms/) (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).
 
-
-```r
+``` r
 duration_logz ~ vowel + s(f13_z, k = 5) + s(f13_z, speaker, by = vowel)
 ```
-
 :::
-
-
 
 ## Results
 
@@ -183,9 +163,9 @@ This means that:
 <br>
 
 ::: f2
-V'a rringraziu! (Calabrese)
+Vi rringrazziu! (Calabrese)
 
-A vi ringrazi a tücc! (Lombard)
+A va ringrazi a tücc! (Lombard)
 :::
 
 <br>
@@ -238,4 +218,3 @@ Process (or rule) scattering is the scenario by which a process coexists in mult
 
 Process scattering is the scenario by which two versions of the same process coexist in the language, either in the same level or in consecutive levels.
 :::
-
