@@ -158,7 +158,7 @@ This means that:
 -   Within each vowel category, **distance to target further modulates duration**.
 :::
 
-## The end  {background-color="var(--inverse)"}
+## The end {background-color="var(--inverse)"}
 
 <br>
 
