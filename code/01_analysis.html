@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Stefano Coretta">
-<meta name="dcterms.date" content="2023-12-13">
+<meta name="dcterms.date" content="2024-03-25">
 
 <title>Analysis of intrinsic vowel duration in Northwestern Italian</title>
 <style>
@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -99,7 +99,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 13, 2023</p>
+      <p class="date">March 25, 2024</p>
     </div>
   </div>
   
@@ -107,11 +107,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <section id="attach-packages" class="level2">
 <h2 class="anchored" data-anchor-id="attach-packages">Attach packages</h2>
-<div class="cell" data-hash="01_analysis_cache/html/packages_1f41d3e7b1dab746a84b0b39df6f771f">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_light</span>())</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
@@ -124,12 +126,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidygam)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>my_seed <span class="ot">&lt;-</span> <span class="dv">9899</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>my_seed <span class="ot">&lt;-</span> <span class="dv">9899</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> viridisLite<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">5</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>cols[<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="st">"#d95f02"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="read-data" class="level2">
 <h2 class="anchored" data-anchor-id="read-data">Read data</h2>
-<div class="cell" data-hash="01_analysis_cache/html/read-data_58a8c1c4af4f4cf7d5688ad5cec7e480">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"formants"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>formants <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(</span>
@@ -147,7 +152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="plotting" class="level2">
 <h2 class="anchored" data-anchor-id="plotting">Plotting</h2>
-<div class="cell" data-hash="01_analysis_cache/html/vowel-plot-1_27e8b49d81dc270c5fd00c8d845daa4c">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>formants <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(speaker) <span class="sc">%&gt;%</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
@@ -160,10 +165,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reverse</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span> <span class="fu">scale_y_reverse</span>(<span class="at">position =</span> <span class="st">"right"</span>) <span class="sc">+</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/vowel-plot-1-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/vowel-plot-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/vowel-plot-2_62e7633c252b9d2da56ee6a79a033232">
+</div>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>formants <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(speaker) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
@@ -176,24 +185,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reverse</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span> <span class="fu">scale_y_reverse</span>(<span class="at">position =</span> <span class="st">"right"</span>) <span class="sc">+</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/vowel-plot-2-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/vowel-plot-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/dur-f1-dens_ba4df94a89af59c2307ef496816b6d8a">
+</div>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>formants <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13_z, duration_z)) <span class="sc">+</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density_2d_filled</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/dur-f1-dens-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/dur-f1-dens-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/dur-f1_2432d6cdb1343045a83e544d667a620e">
+</div>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>formants <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13_z, duration_z, <span class="at">colour =</span> vowel)) <span class="sc">+</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/dur-f1-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/dur-f1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -203,7 +224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="prior-predictive-checks">Prior predictive checks</h3>
 <p>The outcome <code>duration_logz</code> and predictor <code>f13_z</code> are z-scored and <code>vowel</code> is sum coded so that <code>Intercept</code> is the grand mean.</p>
 <p>I am using relatively weakly informative priors.</p>
-<div class="cell" data-hash="01_analysis_cache/html/prior-check_8eee4bceafa9278cd773671bccb2b97c">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>priors <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> Intercept),</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> b),</span>
@@ -226,20 +247,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"data/cache/bm_1_priors"</span>,</span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/prior-plot_9a31e40dc512175592d5a28236cffec2">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(bm_1_priors, <span class="st">"f13_z:vowel"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/prior-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/prior-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(bm_1_priors, <span class="st">"vowel"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/prior-plot-2.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/prior-plot-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="model-fit" class="level3">
 <h3 class="anchored" data-anchor-id="model-fit">Model fit</h3>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1_8171403b65ff41ca746dd6bd3a5c1c54">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>bm_1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  duration_logz <span class="sc">~</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    vowel <span class="sc">*</span> f13_z <span class="sc">+</span></span>
@@ -253,7 +282,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"data/cache/bm_1"</span>,</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-fixef_2ff85644b3b839490a29c4392f50cfd1">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(bm_1, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                Estimate  Est.Error          Q5         Q95
@@ -270,7 +299,7 @@ vowel4:f13_z -0.01187440 0.10306594 -0.18354195  0.15770550</code></pre>
 </div>
 </div>
 <p>Let’s get the estimated effect of vowel quality for /u/.</p>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-draws_740eddc47e95a8192e615cf8ba196f4d">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>bm_1_draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(bm_1) <span class="sc">%&gt;%</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel5 =</span> b_Intercept <span class="sc">-</span> b_vowel1 <span class="sc">-</span> b_vowel2 <span class="sc">-</span> b_vowel3 <span class="sc">-</span> b_vowel4,</span>
@@ -283,7 +312,7 @@ vowel4:f13_z -0.01187440 0.10306594 -0.18354195  0.15770550</code></pre>
 -0.37541152 -0.07203285 </code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-coef-table_918d6e384e0c82c9ad8e5405a57031a0">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>bm_1 <span class="sc">%&gt;%</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_draws_df</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(b_vowel1<span class="sc">:</span>b_vowel4) <span class="sc">%&gt;%</span></span>
@@ -319,20 +348,28 @@ b\_vowel4 &amp; 0.33, 0.62 &amp; 0.36, 0.59 &amp; 0.38, 0.57 &amp; 0.42, 0.53\\
 </section>
 <section id="model-plotting" class="level3">
 <h3 class="anchored" data-anchor-id="model-plotting">Model plotting</h3>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-cond_04c1786edc197a156fde78417f65e305">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(bm_1, <span class="st">"f13_z:vowel"</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bm-1-cond-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bm-1-cond-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-cond-spag_d242e2d80f972615e7549a1b8d0cce7c">
+</div>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(bm_1, <span class="st">"f13_z:vowel"</span>, <span class="at">spaghetti =</span> <span class="cn">TRUE</span>, <span class="at">ndraws =</span> <span class="dv">100</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bm-1-cond-spag-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bm-1-cond-spag-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We need to get the predicted draws to convert duration and F1 back to ms and hz. Note that duration was logged then scaled.</p>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-preds_ec9594152f29b1ba54d898eb2034ac2d">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>seq_minmax <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">by =</span> <span class="dv">1</span>) {</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seq</span>(<span class="fu">min</span>(x), <span class="fu">max</span>(x), <span class="at">by =</span> by)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -350,7 +387,7 @@ b\_vowel4 &amp; 0.33, 0.62 &amp; 0.36, 0.59 &amp; 0.38, 0.57 &amp; 0.42, 0.53\\
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s also calculate the mean F1 values for each vowel, to be added in the plot below.</p>
-<div class="cell" data-hash="01_analysis_cache/html/vmean_4d1076fc4b4d76a0585f8f2cc3148d9a">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>vmean_f13 <span class="ot">&lt;-</span> formants <span class="sc">%&gt;%</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel) <span class="sc">%&gt;%</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">f13_mean =</span> <span class="fu">mean</span>(f13))</span>
@@ -359,7 +396,7 @@ b\_vowel4 &amp; 0.33, 0.62 &amp; 0.36, 0.59 &amp; 0.38, 0.57 &amp; 0.42, 0.53\\
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">f13z_mean =</span> <span class="fu">mean</span>(f13_z))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now plot the model predictions in the original scale.</p>
-<div class="cell" data-hash="01_analysis_cache/html/bm1-pred-plot-1_0964a386bf7e517545c37d5b599f75b3">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>bm_1_preds <span class="sc">%&gt;%</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel, f13) <span class="sc">%&gt;%</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
@@ -376,10 +413,14 @@ b\_vowel4 &amp; 0.33, 0.62 &amp; 0.36, 0.59 &amp; 0.38, 0.57 &amp; 0.42, 0.53\\
 <span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_d</span>() <span class="sc">+</span></span>
 <span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bm1-pred-plot-1-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bm1-pred-plot-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm1-pred-plot-2_a462e157371363d7d063f4011d398f92">
+</div>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>bm_1_preds <span class="sc">%&gt;%</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel, f13) <span class="sc">%&gt;%</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13, duration)) <span class="sc">+</span></span>
@@ -387,32 +428,50 @@ b\_vowel4 &amp; 0.33, 0.62 &amp; 0.36, 0.59 &amp; 0.38, 0.57 &amp; 0.42, 0.53\\
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel) <span class="sc">+</span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bm1-pred-plot-2-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bm1-pred-plot-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm1-pred-plot-ms-hz_065ada64d59765191cf9f7ae05d012e0">
+</div>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>bm_1_preds <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel, f13) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13, duration, <span class="at">fill =</span> vowel)) <span class="sc">+</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.98</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.9</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fl">0.6</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> vmean_f13, <span class="fu">aes</span>(<span class="at">xintercept =</span> f13_mean, <span class="at">colour =</span> vowel), <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rug</span>(<span class="at">data =</span> formants, <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.015</span>, <span class="st">"npc"</span>), <span class="fu">aes</span>(<span class="at">colour =</span> vowel)) <span class="sc">+</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel) <span class="sc">+</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"F1 (Hz)"</span>, <span class="at">y =</span> <span class="st">"Duration (ms)"</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>() <span class="sc">+</span></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_d</span>() <span class="sc">+</span></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">str_replace</span>(vowel, <span class="st">"o"</span>, <span class="st">"ɔ"</span>),</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">factor</span>(vowel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"i"</span>, <span class="st">"u"</span>, <span class="st">"e"</span>, <span class="st">"ɔ"</span>, <span class="st">"a"</span>))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel, f13) <span class="sc">%&gt;%</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13, duration, <span class="at">fill =</span> vowel)) <span class="sc">+</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.98</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.9</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fl">0.6</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> vmean_f13 <span class="sc">|&gt;</span>   <span class="fu">mutate</span>(</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">str_replace</span>(vowel, <span class="st">"o"</span>, <span class="st">"ɔ"</span>),</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">factor</span>(vowel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"i"</span>, <span class="st">"u"</span>, <span class="st">"e"</span>, <span class="st">"ɔ"</span>, <span class="st">"a"</span>))</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  ), <span class="fu">aes</span>(<span class="at">xintercept =</span> f13_mean, <span class="at">colour =</span> vowel), <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rug</span>(<span class="at">data =</span> formants <span class="sc">|&gt;</span>   <span class="fu">mutate</span>(</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">str_replace</span>(vowel, <span class="st">"o"</span>, <span class="st">"ɔ"</span>),</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">factor</span>(vowel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"i"</span>, <span class="st">"u"</span>, <span class="st">"e"</span>, <span class="st">"ɔ"</span>, <span class="st">"a"</span>))</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  ), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.015</span>, <span class="st">"npc"</span>), <span class="fu">aes</span>(<span class="at">colour =</span> vowel)) <span class="sc">+</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel) <span class="sc">+</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"F1 (Hz)"</span>, <span class="at">y =</span> <span class="st">"Duration (ms)"</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cols) <span class="sc">+</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> cols) <span class="sc">+</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bm1-pred-plot-ms-hz-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bm1-pred-plot-ms-hz-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"img/bm1-pred-plot-ms-hz.png"</span>, <span class="at">width =</span> <span class="dv">7</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>But let’s also plot this in the standardised logged duration scale.</p>
-<div class="cell" data-hash="01_analysis_cache/html/bm1-pred-plot-4_33b9584d02f9d5d00a35b3bf626d2fde">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bm_1_preds <span class="sc">%&gt;%</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel, f13) <span class="sc">%&gt;%</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13_z, .epred, <span class="at">fill =</span> vowel)) <span class="sc">+</span></span>
@@ -423,13 +482,17 @@ b\_vowel4 &amp; 0.33, 0.62 &amp; 0.36, 0.59 &amp; 0.38, 0.57 &amp; 0.42, 0.53\\
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel) <span class="sc">+</span></span>
 <span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bm1-pred-plot-4-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bm1-pred-plot-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="average-predictions-and-comparisons" class="level3">
 <h3 class="anchored" data-anchor-id="average-predictions-and-comparisons">Average predictions and comparisons</h3>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-avg-pred_6ea3450874e0667cee037773c72ee08b">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_comparisons</span>(bm_1, <span class="at">variables =</span> <span class="st">"f13_z"</span>, <span class="at">conf_level =</span> <span class="fl">0.9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -439,7 +502,7 @@ b\_vowel4 &amp; 0.33, 0.62 &amp; 0.36, 0.59 &amp; 0.38, 0.57 &amp; 0.42, 0.53\\
 Columns: term, contrast, estimate, conf.low, conf.high </code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-comp-vow_5c167dcdcc739c166b5f3c86e8472c85">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_comparisons</span>(bm_1, <span class="at">variables =</span> <span class="st">"f13_z"</span>, <span class="at">by =</span> <span class="st">"vowel"</span>, <span class="at">conf_level =</span> <span class="fl">0.9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -453,7 +516,7 @@ Columns: term, contrast, estimate, conf.low, conf.high </code></pre>
 Columns: term, contrast, vowel, estimate, conf.low, conf.high, predicted, predicted_hi, predicted_lo, tmp_idx </code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-comp_62e2210888e9a0ec134792aac99c8df3">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_predictions</span>(bm_1, <span class="at">by =</span> <span class="st">"vowel"</span>, <span class="at">conf_level =</span> <span class="fl">0.9</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(</span>
@@ -473,18 +536,22 @@ Columns: term, contrast, vowel, estimate, conf.low, conf.high, predicted, predic
 </section>
 <section id="group-level-effects" class="level3">
 <h3 class="anchored" data-anchor-id="group-level-effects">Group-level effects</h3>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-ranef_1b80ecef7ccbdadee78bbfaf4c5f90ae">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>bm_1_ranef <span class="ot">&lt;-</span> bm_1 <span class="sc">%&gt;%</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread_draws</span>(b_Intercept, r_speaker[subject,var]) <span class="sc">%&gt;%</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">condition_mean =</span> b_Intercept <span class="sc">+</span> r_speaker)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bm-1-ranef-f13-z_028a5f9419cc23509d5fd9e06c2f2087">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>bm_1_ranef <span class="sc">%&gt;%</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(var <span class="sc">==</span> <span class="st">"f13_z"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">reorder</span>(subject, r_speaker, median), <span class="at">x =</span> r_speaker)) <span class="sc">+</span></span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_halfeye</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bm-1-ranef-f13-z-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bm-1-ranef-f13-z-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -493,7 +560,7 @@ Columns: term, contrast, vowel, estimate, conf.low, conf.high, predicted, predic
 <h2 class="anchored" data-anchor-id="non-linear-modelling">Non-linear modelling</h2>
 <section id="f1" class="level3">
 <h3 class="anchored" data-anchor-id="f1">F1</h3>
-<div class="cell" data-hash="01_analysis_cache/html/gam-1_7ead170dce48d66901948d4de8f32908">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>gam_1 <span class="ot">&lt;-</span> <span class="fu">bam</span>(</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  duration_logz <span class="sc">~</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    vowel <span class="sc">+</span></span>
@@ -502,7 +569,7 @@ Columns: term, contrast, vowel, estimate, conf.low, conf.high, predicted, predic
 <span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> formants</span>
 <span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/gam-1-summ_124f6db40bd8b9bfe0696416f8b136e7">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gam_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -538,7 +605,7 @@ R-sq.(adj) =  0.712   Deviance explained = 72.7%
 fREML = 2663.4  Scale est. = 0.28762   n = 3053</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/gam-1-plot_d99d9f72c8f6f5232733688f3f4fa06f">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>vmean <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(formants<span class="sc">$</span>f13_z, <span class="fu">list</span>(formants<span class="sc">$</span>vowel), mean)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fs_terms &lt;- c("s(f13_z,speaker)")</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>fs_terms <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"s(f13_z,speaker):vowela"</span>, <span class="st">"s(f13_z,speaker):vowele"</span>, <span class="st">"s(f13_z,speaker):voweli"</span>, <span class="st">"s(f13_z,speaker):vowelo"</span>, <span class="st">"s(f13_z,speaker):vowelu"</span>)</span>
@@ -556,13 +623,17 @@ Caused by warning:
 ℹ Please supply `.cols` instead.</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/gam-1-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/gam-1-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="brm" class="level3">
 <h3 class="anchored" data-anchor-id="brm">BRM</h3>
-<div class="cell" data-hash="01_analysis_cache/html/bms-1-priors_10c2a09c5a65e19bdeed828974ef0c76">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>priors_s <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> Intercept),</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> b),</span>
@@ -586,19 +657,27 @@ Caused by warning:
 <span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> my_seed</span>
 <span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bms-1-priors-plot_f080a492170a831ec6ef1c8584658908">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(bms_1_priors, <span class="st">"f13_z:vowel"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bms-1-priors-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bms-1-priors-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">conditional_effects</span>(bms_1_priors, <span class="st">"f13_z:vowel"</span>, <span class="at">spaghetti =</span> <span class="cn">TRUE</span>, <span class="at">ndraws =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bms-1-priors-plot-2.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bms-1-priors-plot-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We specify <code>k = 5</code> based on the mgcv modelling above. Reducing <code>k</code> speeds up estimation (because there are less basis functions, hence less parameters to estimate).</p>
 <p>The model takes about 4-5 hours to run on 8 cores.</p>
-<div class="cell" data-hash="01_analysis_cache/html/bms-1_615b0c516698b474b287335e18e6e009">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>bms_1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  duration_logz <span class="sc">~</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    vowel <span class="sc">+</span></span>
@@ -616,7 +695,7 @@ Caused by warning:
 <span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> my_seed</span>
 <span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bms-1-sum_2b591fe38668d081d9b9e831263795fa">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bms_1, <span class="at">prob =</span> <span class="fl">0.9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> Family: gaussian 
@@ -670,7 +749,7 @@ and Tail_ESS are effective sample size measures, and Rhat is the potential
 scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bms-1-coef-table_972225bbb52cc8f9c6a03dc6aeff45cc">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>bms_1 <span class="sc">%&gt;%</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_draws_df</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(b_vowel1<span class="sc">:</span>b_vowel4) <span class="sc">%&gt;%</span></span>
@@ -703,18 +782,26 @@ b\_vowel4 &amp; 0.26, 0.41 &amp; 0.27, 0.40 &amp; 0.29, 0.39 &amp; 0.30, 0.37\\
 \end{tabular}</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bms-1-plot_1d375cd2175d2c3a84d290b037813d96">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">conditional_effects</span>(bms_1, <span class="st">"f13_z:vowel"</span>), <span class="at">plot =</span> <span class="cn">FALSE</span>)[[<span class="dv">1</span>]] <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bms-1-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bms-1-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">conditional_effects</span>(bms_1, <span class="st">"f13_z:vowel"</span>, <span class="at">spaghetti =</span> <span class="cn">TRUE</span>, <span class="at">ndraws =</span> <span class="dv">100</span>), <span class="at">plot =</span> <span class="cn">FALSE</span>)[[<span class="dv">1</span>]] <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bms-1-plot-2.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bms-1-plot-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Let’s plot on the original scale.</p>
-<div class="cell" data-hash="01_analysis_cache/html/bms-1-preds_3ef1c4fb68ca26ae34a84205a76f27b6">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>bms_1_grid <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(</span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">vowel =</span> <span class="fu">levels</span>(formants<span class="sc">$</span>vowel),</span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">f13_z =</span> <span class="fu">seq_minmax</span>(formants<span class="sc">$</span>f13_z, <span class="fl">0.25</span>),</span>
@@ -728,31 +815,61 @@ b\_vowel4 &amp; 0.26, 0.41 &amp; 0.27, 0.40 &amp; 0.29, 0.39 &amp; 0.30, 0.37\\
 <span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">f13 =</span> f13_z <span class="sc">*</span> <span class="fu">sd</span>(formants<span class="sc">$</span>f13) <span class="sc">+</span> <span class="fu">mean</span>(formants<span class="sc">$</span>f13)</span>
 <span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/bms1-pred-plot-ms-hz_f3f9a5fea595d56e317d9eb613cbb821">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>bms_1_preds <span class="sc">%&gt;%</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel, f13) <span class="sc">%&gt;%</span></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13, duration, <span class="at">fill =</span> vowel)) <span class="sc">+</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.98</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.9</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fl">0.6</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> vmean_f13, <span class="fu">aes</span>(<span class="at">xintercept =</span> f13_mean, <span class="at">colour =</span> vowel), <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rug</span>(<span class="at">data =</span> formants, <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.015</span>, <span class="st">"npc"</span>), <span class="fu">aes</span>(<span class="at">colour =</span> vowel)) <span class="sc">+</span></span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel) <span class="sc">+</span></span>
-<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"F1 (Hz)"</span>, <span class="at">y =</span> <span class="st">"Duration (ms)"</span></span>
-<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>() <span class="sc">+</span></span>
-<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_d</span>() <span class="sc">+</span></span>
-<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>bms_1_grid_m <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">vowel =</span> <span class="cn">NA</span>,</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">f13_z =</span> <span class="dv">0</span>,</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">speaker =</span> <span class="cn">NA</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>bms_1_preds_m <span class="ot">&lt;-</span> <span class="fu">epred_draws</span>(bms_1, <span class="at">newdata =</span> bms_1_grid_m, <span class="at">re_formula =</span> <span class="cn">NA</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">duration_log =</span> .epred <span class="sc">*</span> <span class="fu">sd</span>(formants<span class="sc">$</span>duration_log) <span class="sc">+</span> <span class="fu">mean</span>(formants<span class="sc">$</span>duration_log),</span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">duration =</span> <span class="fu">exp</span>(duration_log),</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">f13 =</span> f13_z <span class="sc">*</span> <span class="fu">sd</span>(formants<span class="sc">$</span>f13) <span class="sc">+</span> <span class="fu">mean</span>(formants<span class="sc">$</span>f13)</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>mean_pred_vdur <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">mean</span>(bms_1_preds_m<span class="sc">$</span>duration))</span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>bms_1_preds <span class="sc">%&gt;%</span></span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">str_replace</span>(vowel, <span class="st">"o"</span>, <span class="st">"ɔ"</span>),</span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">factor</span>(vowel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"i"</span>, <span class="st">"u"</span>, <span class="st">"e"</span>, <span class="st">"ɔ"</span>, <span class="st">"a"</span>))</span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel, f13) <span class="sc">%&gt;%</span></span>
+<span id="cb52-22"><a href="#cb52-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(f13, duration, <span class="at">fill =</span> vowel)) <span class="sc">+</span></span>
+<span id="cb52-23"><a href="#cb52-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> mean_pred_vdur, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb52-24"><a href="#cb52-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.98</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb52-25"><a href="#cb52-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ribbon</span>(<span class="at">.width =</span> <span class="fl">0.9</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb52-26"><a href="#cb52-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> <span class="fl">0.6</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb52-27"><a href="#cb52-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> vmean_f13 <span class="sc">|&gt;</span>  <span class="fu">mutate</span>(</span>
+<span id="cb52-28"><a href="#cb52-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">str_replace</span>(vowel, <span class="st">"o"</span>, <span class="st">"ɔ"</span>),</span>
+<span id="cb52-29"><a href="#cb52-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">factor</span>(vowel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"i"</span>, <span class="st">"u"</span>, <span class="st">"e"</span>, <span class="st">"ɔ"</span>, <span class="st">"a"</span>))</span>
+<span id="cb52-30"><a href="#cb52-30" aria-hidden="true" tabindex="-1"></a>  ), <span class="fu">aes</span>(<span class="at">xintercept =</span> f13_mean, <span class="at">colour =</span> vowel), <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb52-31"><a href="#cb52-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rug</span>(<span class="at">data =</span> formants <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
+<span id="cb52-32"><a href="#cb52-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">str_replace</span>(vowel, <span class="st">"o"</span>, <span class="st">"ɔ"</span>),</span>
+<span id="cb52-33"><a href="#cb52-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">vowel =</span> <span class="fu">factor</span>(vowel, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"i"</span>, <span class="st">"u"</span>, <span class="st">"e"</span>, <span class="st">"ɔ"</span>, <span class="st">"a"</span>))</span>
+<span id="cb52-34"><a href="#cb52-34" aria-hidden="true" tabindex="-1"></a>  ), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.015</span>, <span class="st">"npc"</span>), <span class="fu">aes</span>(<span class="at">colour =</span> vowel)) <span class="sc">+</span></span>
+<span id="cb52-35"><a href="#cb52-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>vowel) <span class="sc">+</span></span>
+<span id="cb52-36"><a href="#cb52-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb52-37"><a href="#cb52-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"F1 (Hz)"</span>, <span class="at">y =</span> <span class="st">"Duration (ms)"</span></span>
+<span id="cb52-38"><a href="#cb52-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb52-39"><a href="#cb52-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cols) <span class="sc">+</span></span>
+<span id="cb52-40"><a href="#cb52-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> cols) <span class="sc">+</span></span>
+<span id="cb52-41"><a href="#cb52-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/bms1-pred-plot-ms-hz-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/bms1-pred-plot-ms-hz-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"img/bms1-pred-plot-ms-hz.png"</span>, <span class="at">width =</span> <span class="dv">7</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="f1-and-f2" class="level3">
 <h3 class="anchored" data-anchor-id="f1-and-f2">F1 and F2</h3>
-<div class="cell" data-hash="01_analysis_cache/html/gam-2_d5b5110eff0332a6e5d4ae1a836e275c">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>gam_2 <span class="ot">&lt;-</span> <span class="fu">bam</span>(</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  duration_logz <span class="sc">~</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    vowel <span class="sc">+</span></span>
@@ -761,7 +878,7 @@ b\_vowel4 &amp; 0.26, 0.41 &amp; 0.27, 0.40 &amp; 0.29, 0.39 &amp; 0.30, 0.37\\
 <span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> formants</span>
 <span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/gam-2-summ_3e264d809073135c3830cb9ae432da52">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gam_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -774,29 +891,29 @@ duration_logz ~ vowel + s(f13_z, f23_z) + s(f13_z, f23_z, speaker,
 
 Parametric coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  0.04815    0.14310   0.336    0.737    
-vowel1      -0.14641    0.09984  -1.466    0.143    
-vowel2       0.40133    0.05185   7.741 1.35e-14 ***
-vowel3      -0.33404    0.05005  -6.675 2.95e-11 ***
-vowel4       0.25247    0.04908   5.144 2.87e-07 ***
+(Intercept)  0.04751    0.13872   0.343    0.732    
+vowel1      -0.14625    0.09962  -1.468    0.142    
+vowel2       0.40393    0.05190   7.783 9.77e-15 ***
+vowel3      -0.33581    0.05018  -6.692 2.62e-11 ***
+vowel4       0.25040    0.04923   5.087 3.87e-07 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Approximate significance of smooth terms:
-                         edf Ref.df     F p-value    
-s(f13_z,f23_z)          13.1  17.04 6.503  &lt;2e-16 ***
-s(f13_z,f23_z,speaker) 101.9 567.00 6.987  &lt;2e-16 ***
+                          edf Ref.df     F p-value    
+s(f13_z,f23_z)          12.92  16.85 6.482  &lt;2e-16 ***
+s(f13_z,f23_z,speaker) 104.99 567.00 6.993  &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 R-sq.(adj) =  0.708   Deviance explained = 71.9%
-fREML = 2606.4  Scale est. = 0.29247   n = 3053</code></pre>
+fREML = 2613.2  Scale est. = 0.29242   n = 3053</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/gam-2-pred_63b4e7a5678899f554b1b35ea9f40f21">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>gam_2_preds <span class="ot">&lt;-</span> <span class="fu">predict_gam</span>(gam_2, <span class="at">length_out =</span> <span class="dv">50</span>, <span class="at">exclude_terms =</span> <span class="st">"s(f13_z,f23_z,speaker)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="01_analysis_cache/html/gam-2-plot_a5d3cf3d7dba2e1efdf2258f0f4d2091">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>vmeans <span class="ot">&lt;-</span> formants <span class="sc">%&gt;%</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(vowel) <span class="sc">%&gt;%</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
@@ -812,7 +929,11 @@ fREML = 2606.4  Scale est. = 0.29247   n = 3053</code></pre>
 <span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>(<span class="at">position =</span> <span class="st">"right"</span>) <span class="sc">+</span></span>
 <span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"BuPu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="01_analysis_files/figure-html/gam-2-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="01_analysis_files/figure-html/gam-2-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -899,10 +1020,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -912,8 +1050,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -925,7 +1072,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -969,6 +1239,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -994,6 +1265,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1054,6 +1351,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 

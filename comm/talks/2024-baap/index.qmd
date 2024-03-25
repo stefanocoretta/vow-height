@@ -24,9 +24,9 @@ engine: knitr
 ## Source of intrinsic vowel duration
 
 ::: {layout-ncol="2"}
-![Distance to target (Turk et al. 1994)](images/intrinsic.png){#fig-dist fig-align="center" width="500"}
+![Distance to target (Turk et al. 1994)](../../../img/intrinsic.png){#fig-dist fig-align="center" width="500"}
 
-![Phonologisation (Toivonen et al. 2015)](images/intrinsic-phonologised.png){#fig-phon fig-align="center" width="425"}
+![Phonologisation (Toivonen et al. 2015)](../../../img/intrinsic-phonologised.png){#fig-phon fig-align="center" width="425"}
 :::
 
 ## Source of intrinsic vowel duration
@@ -78,7 +78,7 @@ No within-vowel correlation between F1 and vowel duration.
 
 ## Hypotheses
 
-![](images/vdur-dags-3.png){fig-align="center"}
+![](../../../img/vdur-dags-3.png){fig-align="center"}
 
 <br>
 
@@ -128,7 +128,7 @@ duration_logz ~ vowel + s(f13_z, k = 5) + s(f13_z, speaker, by = vowel)
 
 ## Results
 
-![](images/bms1-pred-plot-ms-hz.png){fig-align="center"}
+![](../../../img/bms1-pred-plot-ms-hz.png){fig-align="center"}
 
 ## Interpretation
 
@@ -187,11 +187,11 @@ Bibliography: <https://stefanocoretta.github.io/biblio/>.
 
 ## Linear modelling
 
-![](images/bm1-pred-plot-ms-hz.png){fig-align="center"}
+![](../../../img/bm1-pred-plot-ms-hz.png){fig-align="center"}
 
 ## Distance to target
 
-![From Ladefoged 1996](images/eke-aka.png){fig-align="center"}
+![From Ladefoged 1996](../../../img/eke-aka.png){fig-align="center"}
 
 ## Phonologisation
 
@@ -203,7 +203,7 @@ When the speaker gains control over a mechanical/physiological process (and the 
 --Bermúdez-Otero 2013
 :::
 
-![](images/life-cycle.png){fig-align="center"}
+![](../../../img/life-cycle.png){fig-align="center"}
 
 ## Process scattering
 

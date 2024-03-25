@@ -28,6 +28,9 @@ library(mgcv)
 library(tidygam)
 
 my_seed <- 9899
+
+cols <- viridisLite::viridis(5)
+cols[5] <- "#d95f02"
 ```
 
 ## Read data
@@ -283,19 +286,29 @@ bm_1_preds %>%
 #| label: bm1-pred-plot-ms-hz
 
 bm_1_preds %>%
+  mutate(
+    vowel = str_replace(vowel, "o", "ɔ"),
+    vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
+  ) |> 
   group_by(vowel, f13) %>%
   ggplot(aes(f13, duration, fill = vowel)) +
   stat_ribbon(.width = 0.98, alpha = 0.2) +
   stat_ribbon(.width = 0.9, alpha = 0.4) +
   stat_lineribbon(.width = 0.6, alpha = 0.8) +
-  geom_vline(data = vmean_f13, aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
-  geom_rug(data = formants, alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
+  geom_vline(data = vmean_f13 |>   mutate(
+    vowel = str_replace(vowel, "o", "ɔ"),
+    vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
+  ), aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
+  geom_rug(data = formants |>   mutate(
+    vowel = str_replace(vowel, "o", "ɔ"),
+    vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
+  ), alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
   facet_wrap(~vowel) +
   labs(
     x = "F1 (Hz)", y = "Duration (ms)"
   ) +
-  scale_fill_viridis_d() +
-  scale_colour_viridis_d() +
+  scale_fill_manual(values = cols) +
+  scale_color_manual(values = cols) +
   theme(legend.position = "none")
 
 ggsave("img/bm1-pred-plot-ms-hz.png", width = 7, height = 5)
@@ -510,20 +523,46 @@ bms_1_preds <- epred_draws(bms_1, newdata = bms_1_grid, re_formula = NA) %>%
 ```{r}
 #| label: bms1-pred-plot-ms-hz
 
+bms_1_grid_m <- expand_grid(
+  vowel = NA,
+  f13_z = 0,
+  speaker = NA
+)
+
+bms_1_preds_m <- epred_draws(bms_1, newdata = bms_1_grid_m, re_formula = NA) %>%
+  mutate(
+    duration_log = .epred * sd(formants$duration_log) + mean(formants$duration_log),
+    duration = exp(duration_log),
+    f13 = f13_z * sd(formants$f13) + mean(formants$f13)
+  )
+
+mean_pred_vdur <- round(mean(bms_1_preds_m$duration))
+
 bms_1_preds %>%
+  mutate(
+    vowel = str_replace(vowel, "o", "ɔ"),
+    vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
+  ) |> 
   group_by(vowel, f13) %>%
   ggplot(aes(f13, duration, fill = vowel)) +
+  geom_hline(yintercept = mean_pred_vdur, linetype = "dashed", colour = "red") +
   stat_ribbon(.width = 0.98, alpha = 0.2) +
   stat_ribbon(.width = 0.9, alpha = 0.4) +
   stat_lineribbon(.width = 0.6, alpha = 0.8) +
-  geom_vline(data = vmean_f13, aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
-  geom_rug(data = formants, alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
+  geom_vline(data = vmean_f13 |>  mutate(
+    vowel = str_replace(vowel, "o", "ɔ"),
+    vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
+  ), aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
+  geom_rug(data = formants |> mutate(
+    vowel = str_replace(vowel, "o", "ɔ"),
+    vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
+  ), alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
   facet_wrap(~vowel) +
   labs(
     x = "F1 (Hz)", y = "Duration (ms)"
   ) +
-  scale_fill_viridis_d() +
-  scale_colour_viridis_d() +
+  scale_fill_manual(values = cols) +
+  scale_colour_manual(values = cols) +
   theme(legend.position = "none")
 
 ggsave("img/bms1-pred-plot-ms-hz.png", width = 7, height = 5)
