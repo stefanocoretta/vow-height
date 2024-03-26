@@ -48,7 +48,10 @@ formants %<>% mutate(
   duration_logz = as.vector(scale(log(duration))),
   f13_z = as.vector(scale(f13)),
   f23_z = as.vector(scale(f23)),
-  speaker = as.factor(speaker)
+  speaker = as.factor(speaker),
+  word_ipa = str_replace_all(word, "ch|c", "k"),
+  previous_sound = str_sub(word_ipa, 1, 1),
+  next_sound = str_sub(word_ipa, 3, 3)
 )
 contrasts(formants$vowel) <- "contr.sum"
 ```
@@ -93,6 +96,15 @@ formants %>%
 formants %>%
   ggplot(aes(f13_z, duration_z)) +
   geom_density_2d_filled()
+```
+
+```{r}
+#| label: dur-place
+
+formants |> 
+  ggplot(aes(vowel, duration)) +
+  geom_jitter(width = 0.2) +
+  facet_grid(rows = vars(next_sound), cols = vars(previous_sound))
 ```
 
 
