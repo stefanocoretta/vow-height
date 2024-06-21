@@ -408,8 +408,10 @@ gam_1 <- bam(
   duration_logz ~
     vowel +
     s(f13_z) +
-    s(f13_z, speaker, by = vowel, bs = "fs", m = 1),
-  data = formants
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1) +
+    s(speech_rate_logz) +
+    s(speech_rate_logz, speaker, bs = "fs", m = 1),
+  data = ita_egg
 )
 ```
 
@@ -425,9 +427,9 @@ summary(gam_1)
 
 vmean <- aggregate(formants$f13_z, list(formants$vowel), mean)
 # fs_terms <- c("s(f13_z,speaker)")
-fs_terms <- c("s(f13_z,speaker):vowela", "s(f13_z,speaker):vowele", "s(f13_z,speaker):voweli", "s(f13_z,speaker):vowelo", "s(f13_z,speaker):vowelu")
+fs_terms <- c("s(f13_z,speaker):vowela", "s(f13_z,speaker):vowele", "s(f13_z,speaker):voweli", "s(f13_z,speaker):vowelo", "s(f13_z,speaker):vowelu", "s(speech_rate_logz,speaker)")
 
-predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100) %>%
+predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100, values = list(speech_rate_logz = 0)) %>%
   plot(series = "f13_z", comparison = "vowel") +
   geom_vline(data = vmean, aes(xintercept = x, colour = Group.1)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -440,19 +442,20 @@ predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100) %>%
 #| label: bms-1-priors
 
 priors_s <- c(
-  prior(normal(0, 1), class = Intercept),
   prior(normal(0, 1), class = b),
   prior(cauchy(0, 0.01), class = sigma),
-  prior(cauchy(0, 1), class = sds)
+  prior(cauchy(0, 0.1), class = sds)
 )
 
 bms_1_priors <- brm(
   duration_logz ~
-    vowel +
+    0 + vowel +
     s(f13_z, k = 5) +
-    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 5),
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 5) +
+    s(speech_rate_logz, k = 5) +
+    s(speech_rate_logz, speaker, bs = "fs", m = 1, k = 5),
   family = gaussian,
-  data = formants,
+  data = ita_egg,
   prior = priors_s,
   sample_prior = "only",
   cores = 4,
@@ -479,11 +482,13 @@ The model takes about 4-5 hours to run on 8 cores.
 
 bms_1 <- brm(
   duration_logz ~
-    vowel +
+    0 + vowel +
     s(f13_z, k = 5) +
-    s(f13_z, speaker, by = vowel, k = 5, bs = "fs", m = 1),
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 5) +
+    s(speech_rate_logz, k = 5) +
+    s(speech_rate_logz, speaker, bs = "fs", m = 1, k = 5),
   family = gaussian,
-  data = formants,
+  data = ita_egg,
   prior = priors_s,
   cores = 4,
   iter = 4000,
