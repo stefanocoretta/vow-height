@@ -26,6 +26,9 @@ library(marginaleffects)
 library(ggdist)
 library(mgcv)
 library(tidygam)
+library(HDInterval)
+library(truncdist)
+library(ggdist)
 
 my_seed <- 9899
 
@@ -121,25 +124,43 @@ formants %>%
 
 ### Prior predictive checks
 
-The outcome `duration_logz` and predictor `f13_z` are z-scored and `vowel` is sum coded so that `Intercept` is the grand mean.
+The outcome `duration_logz` and predictor `f13_z` are z-scored and the intercept has been suppressed so that the indexing method is used for the `vowel` predictor instead of contrasts.
 
 I am using relatively weakly informative priors.
+
+```{r}
+#| label: get-priors
+
+bm_1_f <- bf(
+  duration_logz ~ a + b*f13_z,
+  a ~ 0 + vowel + (0 + vowel | speaker),
+  b ~ 0 + vowel + (0 + vowel | speaker),
+  nl = TRUE
+)
+
+bm_1_get <- get_prior(
+  bm_1_f,
+  data = formants,
+  family = gaussian,
+) |> as_tibble()
+bm_1_get
+```
+
 
 ```{r}
 #| label: prior-check
 
 priors <- c(
-  prior(normal(0, 1), class = Intercept),
-  prior(normal(0, 1), class = b),
+  prior(normal(0, 1), class = b, nlpar = a),
+  prior(normal(0, 0.1), class = b, nlpar = b),
   prior(cauchy(0, 0.1), class = sigma),
   prior(lkj(2), class = cor),
-  prior(cauchy(0, 0.1), class = sd)
+  prior(cauchy(0, 0.1), class = sd, nlpar = a),
+  prior(cauchy(0, 0.1), class = sd, nlpar = b)
 )
 
 bm_1_priors <- brm(
-  duration_logz ~
-    vowel * f13_z +
-    (vowel * f13_z | speaker),
+  bm_1_f,
   family = gaussian,
   data = formants,
   prior = priors,
@@ -149,12 +170,14 @@ bm_1_priors <- brm(
   sample_prior = "only",
   file = "data/cache/bm_1_priors",
 )
+
+bm_1_priors
 ```
 
 ```{r}
 #| label: prior-plot
 
-conditional_effects(bm_1_priors, "f13_z:vowel")
+conditional_effects(bm_1_priors, "f13_z:vowel", spaghetti = TRUE, ndraws = 50)
 conditional_effects(bm_1_priors, "vowel")
 ```
 
@@ -165,9 +188,7 @@ conditional_effects(bm_1_priors, "vowel")
 #| label: bm-1
 
 bm_1 <- brm(
-  duration_logz ~
-    vowel * f13_z +
-    (vowel * f13_z | speaker),
+  bm_1_f,
   family = gaussian,
   data = formants,
   prior = priors,
@@ -183,32 +204,14 @@ bm_1 <- brm(
 fixef(bm_1, probs = c(0.05, 0.95))
 ```
 
-Let's get the estimated effect of vowel quality for /u/.
-
-```{r}
-#| label: bm-1-draws
-
-bm_1_draws <- as_draws_df(bm_1) %>%
-  mutate(
-    vowel5 = b_Intercept - b_vowel1 - b_vowel2 - b_vowel3 - b_vowel4,
-    b_vowel5 = vowel5 - b_Intercept
-  )
-
-quantile(bm_1_draws$b_vowel5, probs = c(0.05, 0.95))
-```
 
 ```{r bm-1-coef-table}
 bm_1 %>%
   as_draws_df() %>%
-  select(b_vowel1:b_vowel4) %>%
-  pivot_longer(b_vowel1:b_vowel4) %>%
+  select(b_b_vowela:b_b_vowelu) %>%
+  pivot_longer(b_b_vowela:b_b_vowelu) %>%
   group_by(name) %>%
-  summarise(
-      cri95 = list(round(quantile2(value, probs = c(0.025, 0.975)), 2)),
-      cri90 = list(round(quantile2(value, probs = c(0.05, 0.95)), 2)),
-      cri80 = list(round(quantile2(value, probs = c(0.1, 0.9)), 2)),
-      cri60 = list(round(quantile2(value, probs = c(0.2, 0.8)), 2))
-  ) %>%
+  median_hdi() |> 
   knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
