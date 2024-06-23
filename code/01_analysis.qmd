@@ -247,16 +247,16 @@ seq_minmax <- function(x, by = 1) {
 }
 
 bm_1_grid <- expand_grid(
-  vowel = levels(formants$vowel),
-  f13_z = seq_minmax(formants$f13_z, 0.5),
+  vowel = levels(ita_egg$vowel),
+  f13_z = seq_minmax(ita_egg$f13_z, 0.5),
   speech_rate_logz = 0
 )
 
 bm_1_preds <- epred_draws(bm_1, newdata = bm_1_grid, re_formula = NA) %>%
   mutate(
-    duration_log = .epred * sd(formants$duration_log) + mean(formants$duration_log),
+    duration_log = .epred * sd(ita_egg$duration_log) + mean(ita_egg$duration_log),
     duration = exp(duration_log),
-    f13 = f13_z * sd(formants$f13) + mean(formants$f13)
+    f13 = f13_z * sd(ita_egg$f13) + mean(ita_egg$f13)
   )
 ```
 
@@ -265,10 +265,10 @@ Let's also calculate the mean F1 values for each vowel, to be added in the plot 
 ```{r}
 #| label: vmean
 
-vmean_f13 <- formants %>%
+vmean_f13 <- ita_egg %>%
   group_by(vowel) %>%
   summarise(f13_mean = mean(f13))
-vmean_f13z <- formants %>%
+vmean_f13z <- ita_egg %>%
   group_by(vowel) %>%
   summarise(f13z_mean = mean(f13_z))
 ```
@@ -323,7 +323,7 @@ bm_1_preds %>%
     vowel = str_replace(vowel, "o", "ɔ"),
     vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
   ), aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
-  geom_rug(data = formants |>   mutate(
+  geom_rug(data = ita_egg |>   mutate(
     vowel = str_replace(vowel, "o", "ɔ"),
     vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
   ), alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
@@ -374,7 +374,7 @@ avg_comparisons(bm_1, variables = "f13_z", by = "vowel", conf_level = 0.9)
 avg_predictions(bm_1, by = "vowel", conf_level = 0.9) %>%
   as_tibble() %>%
   mutate_if(
-    is.numeric, function (x) {exp(x * sd(formants$duration_log) + mean(formants$duration_log))}
+    is.numeric, function (x) {exp(x * sd(ita_egg$duration_log) + mean(ita_egg$duration_log))}
   )
 ```
 
@@ -425,7 +425,7 @@ summary(gam_1)
 ```{r}
 #| label: gam-1-plot
 
-vmean <- aggregate(formants$f13_z, list(formants$vowel), mean)
+vmean <- aggregate(ita_egg$f13_z, list(ita_egg$vowel), mean)
 # fs_terms <- c("s(f13_z,speaker)")
 fs_terms <- c("s(f13_z,speaker):vowela", "s(f13_z,speaker):vowele", "s(f13_z,speaker):voweli", "s(f13_z,speaker):vowelo", "s(f13_z,speaker):vowelu", "s(speech_rate_logz,speaker)")
 
@@ -444,16 +444,20 @@ predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100, values = list(spe
 priors_s <- c(
   prior(normal(0, 1), class = b),
   prior(cauchy(0, 0.01), class = sigma),
-  prior(cauchy(0, 0.1), class = sds)
+  prior(cauchy(0, 1), class = sds)
 )
 
-bms_1_priors <- brm(
+bms_1_f <- bf(
   duration_logz ~
     0 + vowel +
     s(f13_z, k = 5) +
-    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 5) +
+    s(f13_z, speaker, by = vowel, bs = "fs", m = 1) +
     s(speech_rate_logz, k = 5) +
-    s(speech_rate_logz, speaker, bs = "fs", m = 1, k = 5),
+    s(speech_rate_logz, speaker, bs = "fs", m = 1)
+)
+
+bms_1_priors <- brm(
+  bms_1_f,
   family = gaussian,
   data = ita_egg,
   prior = priors_s,
@@ -469,8 +473,7 @@ bms_1_priors <- brm(
 ```{r}
 #| label: bms-1-priors-plot
 
-conditional_effects(bms_1_priors, "f13_z:vowel")
-conditional_effects(bms_1_priors, "f13_z:vowel", spaghetti = TRUE, ndraws = 100)
+plot(conditional_smooths(bms_1_priors, ndraws = 100), ask = FALSE)
 ```
 
 We specify `k = 5` based on the mgcv modelling above. Reducing `k` speeds up estimation (because there are less basis functions, hence less parameters to estimate).
@@ -481,19 +484,15 @@ The model takes about 4-5 hours to run on 8 cores.
 #| label: bms-1
 
 bms_1 <- brm(
-  duration_logz ~
-    0 + vowel +
-    s(f13_z, k = 5) +
-    s(f13_z, speaker, by = vowel, bs = "fs", m = 1, k = 5) +
-    s(speech_rate_logz, k = 5) +
-    s(speech_rate_logz, speaker, bs = "fs", m = 1, k = 5),
+  bms_1_f,
   family = gaussian,
   data = ita_egg,
   prior = priors_s,
   cores = 4,
-  iter = 4000,
-  control = list(adapt_delta = 0.9999),
   threads = threading(2),
+  # iter = 6000,
+  # control = list(adapt_delta = 0.9999, max_treedepth = 15),
+  # thin = 2,
   backend = "cmdstanr",
   file = "data/cache/bms_1",
   seed = my_seed
@@ -509,15 +508,10 @@ summary(bms_1, prob = 0.9)
 ```{r bms-1-coef-table}
 bms_1 %>%
   as_draws_df() %>%
-  select(b_vowel1:b_vowel4) %>%
-  pivot_longer(b_vowel1:b_vowel4) %>%
+  select(b_vowela:b_vowelu) %>%
+  pivot_longer(b_vowela:b_vowelu) %>%
   group_by(name) %>%
-  summarise(
-      cri95 = list(round(quantile2(value, probs = c(0.025, 0.975)), 2)),
-      cri90 = list(round(quantile2(value, probs = c(0.05, 0.95)), 2)),
-      cri80 = list(round(quantile2(value, probs = c(0.1, 0.9)), 2)),
-      cri60 = list(round(quantile2(value, probs = c(0.2, 0.8)), 2))
-  ) %>%
+  median_hdi() |> 
   knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
@@ -534,35 +528,27 @@ Let's plot on the original scale.
 ```{r}
 #| label: bms-1-preds
 
+seq_minmax <- function(x, by = 1) {
+  seq(min(x), max(x), by = by)
+}
+
 bms_1_grid <- expand_grid(
-  vowel = levels(formants$vowel),
-  f13_z = seq_minmax(formants$f13_z, 0.25),
+  vowel = levels(ita_egg$vowel),
+  f13_z = seq_minmax(ita_egg$f13_z, 0.25),
+  speech_rate_logz = 0,
   speaker = NA
 )
 
 bms_1_preds <- epred_draws(bms_1, newdata = bms_1_grid, re_formula = NA) %>%
   mutate(
-    duration_log = .epred * sd(formants$duration_log) + mean(formants$duration_log),
+    duration_log = .epred * sd(ita_egg$duration_log) + mean(ita_egg$duration_log),
     duration = exp(duration_log),
-    f13 = f13_z * sd(formants$f13) + mean(formants$f13)
+    f13 = f13_z * sd(ita_egg$f13) + mean(ita_egg$f13)
   )
 ```
 
 ```{r}
 #| label: bms1-pred-plot-ms-hz
-
-bms_1_grid_m <- expand_grid(
-  vowel = NA,
-  f13_z = 0,
-  speaker = NA
-)
-
-bms_1_preds_m <- epred_draws(bms_1, newdata = bms_1_grid_m, re_formula = NA) %>%
-  mutate(
-    duration_log = .epred * sd(formants$duration_log) + mean(formants$duration_log),
-    duration = exp(duration_log),
-    f13 = f13_z * sd(formants$f13) + mean(formants$f13)
-  )
 
 mean_pred_vdur <- round(mean(bms_1_preds_m$duration))
 
@@ -581,7 +567,7 @@ bms_1_preds %>%
     vowel = str_replace(vowel, "o", "ɔ"),
     vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
   ), aes(xintercept = f13_mean, colour = vowel), linetype = "dashed") +
-  geom_rug(data = formants |> mutate(
+  geom_rug(data = ita_egg |> mutate(
     vowel = str_replace(vowel, "o", "ɔ"),
     vowel = factor(vowel, levels = c("i", "u", "e", "ɔ", "a"))
   ), alpha = 0.1, length = unit(0.015, "npc"), aes(colour = vowel)) +
@@ -607,7 +593,7 @@ gam_2 <- bam(
     vowel +
     s(f13_z, f23_z) +
     s(f13_z, f23_z, speaker, bs = "fs", m = 1),
-  data = formants
+  data = ita_egg
 )
 ```
 
@@ -626,7 +612,7 @@ gam_2_preds <- predict_gam(gam_2, length_out = 50, exclude_terms = "s(f13_z,f23_
 ```{r}
 #| label: gam-2-plot
 
-vmeans <- formants %>%
+vmeans <- ita_egg %>%
   group_by(vowel) %>%
   summarise(
     f13_z = mean(f13_z), f23_z = mean(f23_z)
