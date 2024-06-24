@@ -19,3 +19,8 @@ ggdist
 nlme
 mgcv
 tidygam
+HDInterval
+evd
+truncdist
+StanHeaders
+rstan

@@ -20,6 +20,7 @@ theme_set(theme_light())
 library(magrittr)
 library(coretta2018itaegg)
 library(brms)
+library(rstan)
 library(posterior)
 library(tidybayes)
 library(marginaleffects)
@@ -109,7 +110,7 @@ ita_egg %>%
 
 ita_egg |> 
   ggplot(aes(vowel, duration)) +
-  geom_jitter(width = 0.2) +
+  geom_jitter(width = 0.2, alpha = 0.2) +
   facet_grid(rows = vars(next_sound), cols = vars(previous_sound))
 ```
 
@@ -156,7 +157,7 @@ bm_1_get
 
 priors <- c(
   prior(normal(0, 1), class = b, nlpar = a),
-  prior(normal(0, 0.1), class = b, nlpar = b),
+  prior(normal(0, 1), class = b, nlpar = b),
   prior(normal(0, 0.1), class = b, nlpar = c),
   prior(cauchy(0, 0.1), class = sigma),
   prior(lkj(2), class = cor),
@@ -222,11 +223,44 @@ bm_1 %>%
   knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
+### Posterior predictive check and sensitivity analysis
+
 ```{r}
 #| label: bm-1-pp-check
 pp_check(bm_1, ndraws = 50)
 ```
 
+```{r}
+#| label: bm-1-fix
+bm_1_fix <- fixef(bm_1) |> as_tibble(rownames = "term") |> 
+  mutate(
+    theta = rep(0, 11),
+    sigma_prior = c(rep(1, 10), 0.1),
+    z = abs((Estimate - theta) / Est.Error),
+    s = 1 - (Est.Error^2 / sigma_prior^2)
+  )
+bm_1_fix
+```
+
+```{r}
+#| label: bm-1-prior-sens
+labels <- tibble(
+  s = c(0.25, 0.25, 0.75, 0.75),
+  z = c(1.25, 3.75, 1.25, 3.75),
+  term = c("Poorly identified", "Prior/Posterior\nconflict", "Ideal", "Overfit")
+)
+
+bm_1_fix |> 
+  ggplot(aes(s, z, label = term)) +
+  annotate("rect", xmin = 0, ymin = 0, xmax = 0.5, ymax = 2.5, alpha = 0.5, fill = "#e66101") +
+  annotate("rect", xmin = 0, ymin = 2.5, xmax = 0.5, ymax = Inf, alpha = 0.5, fill = "#fdb863") +
+  annotate("rect", xmin = 0.5, ymin = 0, xmax = 1, ymax = 2.5, alpha = 0.5, fill = "#b2abd2") +
+  annotate("rect", xmin = 0.5, ymin = 2.5, xmax = 1, ymax = Inf, alpha = 0.5, fill = "#5e3c99") +
+  geom_text() +
+  geom_point() +
+  geom_label(data = labels, colour = "white", fill = "black") +
+  xlim(0, 1)
+```
 
 ### Model plotting
 
@@ -379,7 +413,7 @@ avg_comparisons(bm_1, variables = "f13_z", by = "vowel", conf_level = 0.9)
 avg_predictions(bm_1, by = "vowel", conf_level = 0.9) %>%
   as_tibble() %>%
   mutate_if(
-    is.numeric, function (x) {exp(x * sd(ita_egg$duration_log) + mean(ita_egg$duration_log))}
+    is.numeric, function(x) {exp(x * sd(ita_egg$duration_log) + mean(ita_egg$duration_log))}
   )
 ```
 
@@ -519,6 +553,44 @@ bms_1 %>%
   knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
+### Posterior predictive check and sensitivity analysis
+
+```{r}
+#| label: bms-1-pp-check
+pp_check(bms_1, ndraws = 50)
+```
+
+```{r}
+#| label: bms-1-fix
+bms_1_fix <- fixef(bms_1) |> as_tibble(rownames = "term") |> 
+  mutate(
+    theta = rep(0, 7),
+    sigma_prior = rep(1, 7),
+    z = abs((Estimate - theta) / Est.Error),
+    s = 1 - (Est.Error^2 / sigma_prior^2)
+  )
+bms_1_fix
+```
+```{r}
+#| label: bms-1-prior-sens
+labels <- tibble(
+  s = c(0.25, 0.25, 0.75, 0.75),
+  z = c(1.25, 3.75, 1.25, 3.75),
+  term = c("Poorly identified", "Prior/Posterior\nconflict", "Ideal", "Overfit")
+)
+
+bms_1_fix |> 
+  ggplot(aes(s, z, label = term)) +
+  annotate("rect", xmin = 0, ymin = 0, xmax = 0.5, ymax = 2.5, alpha = 0.5, fill = "#e66101") +
+  annotate("rect", xmin = 0, ymin = 2.5, xmax = 0.5, ymax = Inf, alpha = 0.5, fill = "#fdb863") +
+  annotate("rect", xmin = 0.5, ymin = 0, xmax = 1, ymax = 2.5, alpha = 0.5, fill = "#b2abd2") +
+  annotate("rect", xmin = 0.5, ymin = 2.5, xmax = 1, ymax = Inf, alpha = 0.5, fill = "#5e3c99") +
+  geom_text() +
+  geom_point() +
+  geom_label(data = labels, colour = "white", fill = "black") +
+  xlim(0, 1)
+```
+
 
 ### Model plotting
 
@@ -601,48 +673,6 @@ bms_1_preds %>%
 
 ggsave("img/bms1-pred-plot-ms-hz.png", width = 7, height = 5)
 ```
-
-### Posterior predictive check and sensitivity analysis
-
-```{r}
-#| label: bms-1-pp-check
-pp_check(bms_1, ndraws = 50)
-```
-
-
-
-```{r}
-#| label: bms-1-fix
-bms_1_fix <- fixef(bms_1) |> as_tibble(rownames = "term") |> 
-  mutate(
-    theta = rep(0, 7),
-    sigma_prior = rep(1, 7),
-    z = abs((Estimate - theta) / Est.Error),
-    s = 1 - (Est.Error^2 / sigma_prior^2)
-  )
-bms_1_fix
-```
-```{r}
-#| label: bms-1-prior-sens
-labels <- tibble(
-  s = c(0.25, 0.25, 0.75, 0.75),
-  z = c(1.25, 3.75, 1.25, 3.75),
-  term = c("Poorly identified", "Prior/Posterior\nconflict", "Ideal", "Overfit")
-)
-
-bms_1_fix |> 
-  ggplot(aes(s, z, label = term)) +
-  annotate("rect", xmin = 0, ymin = 0, xmax = 0.5, ymax = 2.5, alpha = 0.5, fill = "#e66101") +
-  annotate("rect", xmin = 0, ymin = 2.5, xmax = 0.5, ymax = Inf, alpha = 0.5, fill = "#fdb863") +
-  annotate("rect", xmin = 0.5, ymin = 0, xmax = 1, ymax = 2.5, alpha = 0.5, fill = "#b2abd2") +
-  annotate("rect", xmin = 0.5, ymin = 2.5, xmax = 1, ymax = Inf, alpha = 0.5, fill = "#5e3c99") +
-  geom_text() +
-  geom_point() +
-  geom_label(data = labels, colour = "white", fill = "black") +
-  xlim(0, 1)
-```
-
-
 
 ## Non-linear modelling: GAM F1 and F2
 
