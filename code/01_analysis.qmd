@@ -12,7 +12,7 @@ format:
 ## Attach packages
 
 ```{r}
-#| label: packages
+#| label: setup
 #| message: false
 
 library(tidyverse)
@@ -46,7 +46,7 @@ data("ita_egg")
 ita_egg <- ita_egg |> 
   drop_na(f13, f23) |> 
   mutate(
-  duration = v1_duration * 1000,
+  duration = v1_duration,
   vowel = as.factor(vowel),
   duration_z = as.vector(scale(duration)),
   duration_log = log(duration),
@@ -60,7 +60,6 @@ ita_egg <- ita_egg |>
   previous_sound = str_sub(word_ipa, 1, 1),
   next_sound = str_sub(word_ipa, 3, 3)
 )
-contrasts(ita_egg$vowel) <- "contr.sum"
 ```
 
 ## Plotting
@@ -222,6 +221,12 @@ bm_1 %>%
   median_hdi() |> 
   knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
+
+```{r}
+#| label: bm-1-pp-check
+pp_check(bm_1, ndraws = 50)
+```
+
 
 ### Model plotting
 
@@ -397,9 +402,7 @@ bm_1_ranef %>%
 ```
 
 
-## Non-linear modelling
-
-### F1
+## Non-linear modelling: GAM
 
 ```{r}
 #| label: gam-1
@@ -436,7 +439,9 @@ predict_gam(gam_1, exclude_terms = fs_terms, length_out = 100, values = list(spe
   facet_wrap(~vowel)
 ```
 
-### BRM
+## Non-linear modelling: BRM
+
+### Prior predictive checks
 
 ```{r}
 #| label: bms-1-priors
@@ -476,6 +481,8 @@ bms_1_priors <- brm(
 plot(conditional_smooths(bms_1_priors, ndraws = 100), ask = FALSE)
 ```
 
+### Model fit
+
 We specify `k = 5` based on the mgcv modelling above. Reducing `k` speeds up estimation (because there are less basis functions, hence less parameters to estimate).
 
 The model takes about 4-5 hours to run on 8 cores.
@@ -490,9 +497,6 @@ bms_1 <- brm(
   prior = priors_s,
   cores = 4,
   threads = threading(2),
-  # iter = 6000,
-  # control = list(adapt_delta = 0.9999, max_treedepth = 15),
-  # thin = 2,
   backend = "cmdstanr",
   file = "data/cache/bms_1",
   seed = my_seed
@@ -515,6 +519,8 @@ bms_1 %>%
   knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
+
+### Model plotting
 
 ```{r}
 #| label: bms-1-plot
@@ -550,6 +556,20 @@ bms_1_preds <- epred_draws(bms_1, newdata = bms_1_grid, re_formula = NA) %>%
 ```{r}
 #| label: bms1-pred-plot-ms-hz
 
+bms_1_grid_m <- expand_grid(
+  vowel = levels(ita_egg$vowel),
+  f13_z = 0,
+  speech_rate_logz = 0, 
+  speaker = NA
+)
+
+bms_1_preds_m <- epred_draws(bms_1, newdata = bms_1_grid_m, re_formula = NA) %>%
+  mutate(
+    duration_log = .epred * sd(ita_egg$duration_log) + mean(ita_egg$duration_log),
+    duration = exp(duration_log),
+    f13 = f13_z * sd(ita_egg$f13) + mean(ita_egg$f13)
+  )
+
 mean_pred_vdur <- round(mean(bms_1_preds_m$duration))
 
 bms_1_preds %>%
@@ -582,8 +602,49 @@ bms_1_preds %>%
 ggsave("img/bms1-pred-plot-ms-hz.png", width = 7, height = 5)
 ```
 
+### Posterior predictive check and sensitivity analysis
 
-### F1 and F2
+```{r}
+#| label: bms-1-pp-check
+pp_check(bms_1, ndraws = 50)
+```
+
+
+
+```{r}
+#| label: bms-1-fix
+bms_1_fix <- fixef(bms_1) |> as_tibble(rownames = "term") |> 
+  mutate(
+    theta = rep(0, 7),
+    sigma_prior = rep(1, 7),
+    z = abs((Estimate - theta) / Est.Error),
+    s = 1 - (Est.Error^2 / sigma_prior^2)
+  )
+bms_1_fix
+```
+```{r}
+#| label: bms-1-prior-sens
+labels <- tibble(
+  s = c(0.25, 0.25, 0.75, 0.75),
+  z = c(1.25, 3.75, 1.25, 3.75),
+  term = c("Poorly identified", "Prior/Posterior\nconflict", "Ideal", "Overfit")
+)
+
+bms_1_fix |> 
+  ggplot(aes(s, z, label = term)) +
+  annotate("rect", xmin = 0, ymin = 0, xmax = 0.5, ymax = 2.5, alpha = 0.5, fill = "#e66101") +
+  annotate("rect", xmin = 0, ymin = 2.5, xmax = 0.5, ymax = Inf, alpha = 0.5, fill = "#fdb863") +
+  annotate("rect", xmin = 0.5, ymin = 0, xmax = 1, ymax = 2.5, alpha = 0.5, fill = "#b2abd2") +
+  annotate("rect", xmin = 0.5, ymin = 2.5, xmax = 1, ymax = Inf, alpha = 0.5, fill = "#5e3c99") +
+  geom_text() +
+  geom_point() +
+  geom_label(data = labels, colour = "white", fill = "black") +
+  xlim(0, 1)
+```
+
+
+
+## Non-linear modelling: GAM F1 and F2
 
 ```{r}
 #| label: gam-2
