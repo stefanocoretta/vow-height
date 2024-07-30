@@ -121,10 +121,23 @@ ita_egg |>
 ```{r}
 #| label: dur-f1
 
-ita_egg %>%
-  ggplot(aes(f13_z, duration_z, colour = vowel)) +
+ita_egg %>% 
+  group_by(speaker) %>%
+  mutate(
+    f13_speaker_z = as.vector(scale(log(f13))),
+    duration_speaker_z = as.vector(scale(log(duration)))
+  ) %>%
+  ggplot(aes(f13_speaker_z, duration_speaker_z, colour = vowel)) +
   geom_point(alpha = 0.2) +
-  geom_smooth(method = "lm", formula = y ~ x)
+  geom_smooth(method = "lm", formula = y ~ x) +
+  scale_color_brewer(type = "qual", palette = "Dark2") +
+  labs(
+    x = "F1 (normalised)",
+    y = "Vowel duration (normalised)",
+    caption = "Normalisation was achieved by first logging F1\nand vowel duration and then z-scoring within each speaker."
+  )
+
+ggsave("img/dur-f1.png", width = 7, height = 5)
 ```
 
 ## Linear modelling
