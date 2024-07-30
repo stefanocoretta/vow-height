@@ -5,8 +5,9 @@ date: today
 execute: 
   cache: true
 format:
-  html: default
-  pdf: default
+  html: 
+    toc: true
+    number-sections: true
 ---
 
 ## Attach packages
@@ -38,6 +39,8 @@ cols[5] <- "#d95f02"
 ```
 
 ## Read data
+
+The following code loads the data from the coretta2018itaegg package and creates new variables as transformations of the existing ones.
 
 ```{r}
 #| label: read-data
@@ -234,19 +237,20 @@ bm_1_coef_table_a <- bm_1 %>%
   unite("q60", q60_lo, q60_hi, sep = ", ")
 bm_1_coef_table_a
 
-bm_1_coef_table_a |> 
-  knitr::kable(format = "latex") %>% cat(sep = "\n")
+# bm_1_coef_table_a |> knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
 ```{r}
 #| label: bm-1-coef-table-b
-bm_1 %>%
+bm_1_coef_table_b <- bm_1 %>%
   as_draws_df() %>%
   select(b_b_vowela:b_b_vowelu) %>%
   pivot_longer(b_b_vowela:b_b_vowelu) %>%
   group_by(name) %>%
-  median_hdi() |> 
-  knitr::kable(format = "latex") %>% cat(sep = "\n")
+  median_hdi() 
+bm_1_coef_table_b
+
+# bm_1_coef_table_b |> knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
 ```{r}
@@ -271,8 +275,7 @@ bm_1_coef_table_b_2 <- bm_1 %>%
   unite("q60", q60_lo, q60_hi, sep = ", ")
 bm_1_coef_table_b_2
 
-bm_1_coef_table_b_2 |> 
-  knitr::kable(format = "latex") %>% cat(sep = "\n")
+# bm_1_coef_table_b_2 |> knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
 
@@ -492,6 +495,8 @@ bm_1_ranef %>%
 
 ## Non-linear modelling: GAM
 
+A GAM model with the mgcv package is run to get an estimate number of `k` since brms does not optimise `k` and fits the model just with the default `k` which can slow down the MCMC sampling with large values of `k`.
+
 ```{r}
 #| label: gam-1
 
@@ -598,13 +603,16 @@ summary(bms_1, prob = 0.9)
 ```
 
 ```{r bms-1-coef-table}
-bms_1 %>%
+bms_1_coef_table <- bms_1 %>%
   as_draws_df() %>%
   select(b_vowela:b_vowelu) %>%
   pivot_longer(b_vowela:b_vowelu) %>%
   group_by(name) %>%
-  median_hdi() |> 
-  knitr::kable(format = "latex") %>% cat(sep = "\n")
+  median_hdi()
+  
+bms_1_coef_table
+
+# bms_1_coef_table |> knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
 ```{r bms-1-coef-table-2}
@@ -625,9 +633,8 @@ bms_1_coef_table_2 <- bms_1 %>%
   unite("q90", q90_lo, q90_hi, sep = ", ") |> 
   unite("q80", q80_lo, q80_hi, sep = ", ") |> 
   unite("q60", q60_lo, q60_hi, sep = ", ")
-
-bms_1_coef_table_2 |> 
-  knitr::kable(format = "latex") %>% cat(sep = "\n")
+bms_1_coef_table_2
+# bms_1_coef_table_2 |> knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
 ### Posterior predictive check and sensitivity analysis
