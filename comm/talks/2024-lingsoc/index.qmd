@@ -1,0 +1,330 @@
+---
+title: "Is vowel duration the product of gestural timing alone? Data from Northwestern Italian"
+author: "Stefano Coretta"
+institute: "University of Edinburgh"
+format:
+  mono-light-revealjs:
+    history: false
+editor: visual
+filters:
+  - tachyonsextra
+knitr:
+  opts_chunk:
+    fig.width: 7
+    fig.align: center
+execute: 
+  echo: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+theme_set(theme_light())
+library(coretta2018itaegg)
+```
+
+```{r}
+#| label: read-data
+
+data("ita_egg")
+
+ita_egg <- ita_egg |> 
+  drop_na(f13, f23) |> 
+  mutate(
+  duration = v1_duration,
+  vowel = as.factor(vowel),
+  duration_z = as.vector(scale(duration)),
+  duration_log = log(duration),
+  duration_logz = as.vector(scale(log(duration))),
+  speech_rate_log = log(speech_rate),
+  speech_rate_logz = as.vector(scale(log(speech_rate_log))),
+  f13_z = as.vector(scale(f13)),
+  f23_z = as.vector(scale(f23)),
+  speaker = as.factor(speaker),
+  word_ipa = str_replace_all(word, "ch|c", "k"),
+  previous_sound = str_sub(word_ipa, 1, 1),
+  next_sound = str_sub(word_ipa, 3, 3)
+)
+```
+
+## Intrinsic vowel duration
+
+::: {.box-note .f2}
+**High vowels tend to be shorter than low vowels.**
+:::
+
+::: box-tip
+**American English** in Lieberman and Kubaska 1979, Turk et al. 1994, Tauberer and Evanini 2009, Toivonen et al. 2015, Wilson and Chodroff 2017; **Dutch** in Bundgaard 1980; **Swedish** in Toivonen et al. 2015.
+:::
+
+## Source of intrinsic vowel duration
+
+::: {layout-ncol="2"}
+![Distance to target (Turk et al. 1994)](../../../img/intrinsic.png){#fig-dist fig-align="center" width="500"}
+
+![Phonologisation (Toivonen et al. 2015)](../../../img/intrinsic-phonologised.png){#fig-phon fig-align="center" width="425"}
+:::
+
+## Source of intrinsic vowel duration
+
+:::::::: columns
+:::: {.column width="40%"}
+::: box-tip
+**Turk et al. 1994**
+
+-   American English
+-   1 speaker
+-   /e, ɛ, æ, ɑ, ʌ/
+:::
+::::
+
+::: {.column width="10%"}
+:::
+
+:::: {.column width="40%"}
+::: box-tip
+**Toivonen et al 2015**
+
+-   "English"
+    -   3 speakers
+    -   *miss mess mass bit bet bat*
+-   "Swedish"
+    -   2 speakers
+    -   *missa messa massa*
+:::
+::::
+::::::::
+
+:::::::: columns
+:::: {.column width="40%"}
+::: box-note
+Correlation between distance to target and vowel duration.
+:::
+::::
+
+::: {.column width="10%"}
+:::
+
+:::: {.column width="40%"}
+::: box-note
+No within-vowel correlation between F1 and vowel duration.
+:::
+::::
+::::::::
+
+## Hypotheses
+
+![](images/vdur-dags-3a.png){fig-align="center"}
+
+<br>
+
+::: box-error
+**(a) Distance to target**: The effect of vowel should be 0 (Turk et al. 1994).
+
+**(b) Phonologisation**: The effect of F1 should be 0 (Toivonen et al. 2015).
+
+**(c) Hybrid**: There should be both an effect of vowel and F1.
+:::
+
+## Methods
+
+::: box-note
+-   Pre-existing acoustic data: <https://osf.io/xdgfz/>.
+
+-   **19 speakers** of Northwestern Italian (Verbano-Cusio-Ossola).
+
+-   CVCo words (mostly nonce, some real), in 5 frame sentences.
+
+    -   C = /p, t, k/, all permutations.
+
+    -   V = /a, e, i, ɔ, u/.
+
+    -   **\~855 tokens per vowel**.
+:::
+
+. . .
+
+::: box-tip
+-   Vowel duration: from appearance of F2/3 to disappearance of F2/3.
+
+-   F1/F2 measurements from [FastTrack](https://github.com/santiagobarreda/FastTrack) (Barreda 2021).
+:::
+
+## Raw data: F1-F2
+
+```{r}
+#| label: vowel-plot
+
+ita_egg %>%
+  group_by(speaker) %>%
+  mutate(
+    f13_speaker_z = as.vector(scale(f13)),
+    f23_speaker_z = as.vector(scale(f23))
+  ) %>%
+  ggplot(aes(f23_speaker_z, f13_speaker_z, colour = vowel)) +
+  geom_point(alpha = 0.2) +
+  stat_ellipse(type = "norm") +
+  scale_x_reverse(position = "top") + scale_y_reverse(position = "right") +
+  coord_fixed() +
+  labs(x = "F2 (z-scores)", y = "F1 (z-scores)")
+```
+
+## Raw data: vowel duration
+
+```{r}
+#| label: vow-duration
+
+ita_egg |>
+  ggplot(aes(vowel, v1_duration)) +
+  geom_jitter(alpha = 0.5, width = 0.2) +
+  labs(y = "Vowel duration (ms)")
+
+```
+
+## Raw data: F1 and vowel duration
+
+```{r}
+#| label: dur-f1
+
+ita_egg %>% 
+  group_by(speaker) %>%
+  mutate(
+    f13_speaker_z = as.vector(scale(log(f13))),
+    duration_speaker_z = as.vector(scale(log(duration)))
+  ) %>%
+  ggplot(aes(f13_speaker_z, duration_speaker_z, colour = vowel)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm", formula = y ~ x) +
+  scale_color_brewer(type = "qual", palette = "Dark2") +
+  labs(
+    x = "F1 (normalised)",
+    y = "Vowel duration (normalised)",
+    caption = "Normalisation was achieved by first logging F1\nand vowel duration and then z-scoring within each speaker."
+  )
+```
+
+
+## Methods (cont.)
+
+::: box-note
+-   Causal Inference (McElreath 2019). [Dagitty](https://www.dagitty.net/dags.html).
+
+-   Bayesian model fitted with [brms](https://paul-buerkner.github.io/brms/) (Bürkner 2017, 2018, 2021) in R (R Core Team 2024).
+
+``` r
+duration_logz ~
+  # duration by vowel
+  vowel +
+  # duration by F1 (non-linear)
+  s(f13_z, k = 5) +
+  # adjust effect of F1 based on speaker
+  s(f13_z, speaker, by = vowel, bs = "fs", m = 1) +
+  # duration by speech rate (non-linear)
+  s(speech_rate_logz, k = 5) +
+  # adjust effect of speech rate based on speaker
+  s(speech_rate_logz, speaker, bs = "fs", m = 1)
+```
+:::
+
+## Results
+
+![](../../../img/bms1-pred-plot-ms-hz.png){fig-align="center"}
+
+## Results (cont.)
+
+![](images/lazy-table.png){fig-align="center"}
+
+## Interpretation
+
+::: box-note
+-   There is a **robust effect of F1** and the effect is **non-linear**.
+
+    -   Negative up to 400 Hz, positive from 450 Hz.
+
+-   There is a **robust effect of vowel**.
+
+    -   F1 alone is not sufficient to explain vowel duration.
+:::
+
+. . .
+
+::: box-tip
+**The results are compatible with (c) Hybrid hypothesis.**
+:::
+
+. . .
+
+::: box-note
+If (c) Hybrid hypothesis is correct:
+
+-   Each vowel must have its **own duration target**.
+
+-   Within each vowel category, **distance to target further modulates duration**.
+:::
+
+## The end {background-color="var(--inverse)"}
+
+<br>
+
+::: f2
+Vi rringrazziu! (Calabrese)
+
+A va ringrazi a tücc! (Lombard)
+:::
+
+<br>
+
+Research compendium: <https://github.com/stefanocoretta/vow-height>.
+
+Submitted manuscript: <https://osf.io/preprints/osf/83afz>.
+
+Bibliography: <https://stefanocoretta.github.io/biblio/>.
+
+## APPENDIX {.center background-color="var(--inverse)"}
+
+```{css}
+.center h2 {
+  text-align: center;
+  font-size: 4em;
+}
+```
+
+## Linear modelling
+
+![](../../../img/bm1-pred-plot-ms-hz.png){fig-align="center"}
+
+## Distance to target
+
+![From Ladefoged 1996](../../../img/eke-aka.png){fig-align="center"}
+
+## Phonologisation
+
+::: box-note
+**Phonologisation**
+
+When the speaker gains control over a mechanical/physiological process (and the process "enters the phonetics" of the language).
+
+--Bermúdez-Otero 2013
+:::
+
+![](../../../img/life-cycle.png){fig-align="center"}
+
+## Process scattering
+
+::: box-note
+**Process scattering**
+
+Process (or rule) scattering is the scenario by which a process coexists in multiple levels of the language.
+
+--Bermúdez-Otero 2013
+:::
+
+. . .
+
+::: box-tip
+**Process scattering (revised)**
+
+Process scattering is the scenario by which two versions of the same process coexist in the language, either in the same level or in consecutive levels.
+:::
