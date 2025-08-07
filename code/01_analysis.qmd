@@ -52,6 +52,8 @@ ita_egg <- ita_egg |>
   mutate(
   duration = v1_duration,
   vowel = as.factor(vowel),
+  c1_place = as.factor(c1_place),
+  c2_place = as.factor(c2_place),
   duration_z = as.vector(scale(duration)),
   duration_log = log(duration),
   duration_logz = as.vector(scale(log(duration))),
@@ -153,8 +155,8 @@ I am using relatively weakly informative priors.
 
 bm_1_f <- bf(
   duration_logz ~ a + b*f13_z + c*speech_rate_logz,
-  a ~ 0 + vowel + (0 + vowel | speaker),
-  b ~ 0 + vowel + (0 + vowel | speaker),
+  a ~ 0 + vowel:c1_place:c2_place + (0 + vowel:c1_place:c2_place | speaker),
+  b ~ 0 + vowel:c1_place:c2_place + (0 + vowel:c1_place:c2_place | speaker),
   c ~ (1 | speaker),
   nl = TRUE
 )
@@ -182,12 +184,14 @@ priors <- c(
   prior(cauchy(0, 0.1), class = sd, nlpar = c)
 )
 
+
 bm_1_priors <- brm(
   bm_1_f,
   family = gaussian,
   data = ita_egg,
   prior = priors,
   cores = 4,
+  init = 0,
   threads = threading(2),
   backend = "cmdstanr",
   sample_prior = "only",
@@ -201,6 +205,8 @@ bm_1_priors
 #| label: prior-plot
 
 conditional_effects(bm_1_priors, "f13_z:vowel", spaghetti = TRUE, ndraws = 50)
+conditional_effects(bm_1_priors, "f13_z:c1_place", spaghetti = TRUE, ndraws = 50)
+conditional_effects(bm_1_priors, "f13_z:c2_place", spaghetti = TRUE, ndraws = 50)
 conditional_effects(bm_1_priors, "speech_rate_logz", spaghetti = TRUE, ndraws = 50)
 conditional_effects(bm_1_priors, "vowel")
 ```
@@ -216,6 +222,7 @@ bm_1 <- brm(
   family = gaussian,
   data = ita_egg,
   prior = priors,
+  init = 0,
   cores = 4,
   threads = threading(2),
   backend = "cmdstanr",
@@ -233,8 +240,8 @@ fixef(bm_1, probs = c(0.05, 0.95))
 
 bm_1_coef_table_a <- bm_1 %>%
   as_draws_df() %>%
-  select(b_a_vowela:b_a_vowelu) %>%
-  pivot_longer(b_a_vowela:b_a_vowelu) %>%
+  select(`b_a_vowela:c1_placelabial:c2_placelabial`:`b_a_vowelu:c1_placevelar:c2_placevelar`) %>%
+  pivot_longer(`b_a_vowela:c1_placelabial:c2_placelabial`:`b_a_vowelu:c1_placevelar:c2_placevelar`) %>%
   group_by(name) |> 
   reframe(
     q95 = round(quantile2(value, probs = c(0.025, 0.975)), 2),
@@ -271,8 +278,8 @@ bm_1_coef_table_b
 
 bm_1_coef_table_b_2 <- bm_1 %>%
   as_draws_df() %>%
-  select(b_b_vowela:b_b_vowelu) %>%
-  pivot_longer(b_b_vowela:b_b_vowelu) %>%
+  select(`b_b_vowela:c1_placelabial:c2_placelabial`:`b_b_vowelu:c1_placevelar:c2_placevelar`) %>%
+  pivot_longer(`b_b_vowela:c1_placelabial:c2_placelabial`:`b_b_vowelu:c1_placevelar:c2_placevelar`) %>%
   group_by(name) |> 
   reframe(
     q95 = round(quantile2(value, probs = c(0.025, 0.975)), 2),
@@ -337,13 +344,13 @@ bm_1_fix |>
 ```{r}
 #| label: bm-1-cond
 
-conditional_effects(bm_1, "f13_z:vowel", prob = 0.9)
+conditional_effects(bm_1, "f13_z:vowel", conditions = make_conditions(bm_1, c("c1_place", "c2_place")), prob = 0.9)
 ```
 
 ```{r}
 #| label: bm-1-cond-spag
 
-conditional_effects(bm_1, "f13_z:vowel", spaghetti = TRUE, ndraws = 100, prob = 0.9)
+conditional_effects(bm_1, "f13_z:vowel", conditions = make_conditions(bm_1, c("c1_place", "c2_place")), spaghetti = TRUE, ndraws = 100, prob = 0.9)
 ```
 
 We need to get the predicted draws to convert duration and F1 back to ms and hz. Note that duration was logged then scaled.

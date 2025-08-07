@@ -1281,6 +1281,31 @@
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
       "Repository": "CRAN"
     },
+    "coretta2018itaegg": {
+      "Package": "coretta2018itaegg",
+      "Version": "1.0.1",
+      "Source": "GitHub",
+      "Type": "Package",
+      "Title": "Data Package of Vowel duration, voicing duration, and vowel height: Acoustic and articulatory data from Italian (Coretta 2018)",
+      "Date": "2024-01-26",
+      "Authors@R": "person(given = \"Stefano\", family = \"Coretta\", role = c(\"aut\", \"cre\"), email = paste0(\"s.coretta\", \"@\", \"ed.ac.uk\"))",
+      "Description": "It provides datasets from a study on vowel and voicing duration, and vowel height in Italian.",
+      "License": "CC-BY-4.0 + file LICENSE",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "RoxygenNote": "7.2.3",
+      "Depends": [
+        "R (>= 2.10)"
+      ],
+      "Author": "Stefano Coretta [aut, cre]",
+      "Maintainer": "Stefano Coretta <s.coretta@ed.ac.uk>",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "stefanocoretta",
+      "RemoteRepo": "coretta2018itaegg",
+      "RemoteRef": "devel",
+      "RemoteSha": "04ef4e032d07df27d4024111b3fe67497eae8e56"
+    },
     "cpp11": {
       "Package": "cpp11",
       "Version": "0.5.2",
