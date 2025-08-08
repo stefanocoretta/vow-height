@@ -236,6 +236,90 @@ fixef(bm_1, probs = c(0.05, 0.95))
 ```
 
 ```{r}
+#| label: bm-1-draws
+
+bm_1_draws <- as_draws_df(bm_1)
+
+bm_1_draws_long <- bm_1_draws |> 
+  select(`b_a_vowela:c1_placelabial:c2_placelabial`:`b_b_vowelu:c1_placevelar:c2_placevelar`, .chain, .iteration, .draw) |> 
+  pivot_longer(`b_a_vowela:c1_placelabial:c2_placelabial`:`b_b_vowelu:c1_placevelar:c2_placevelar`) |> 
+  separate(name, c("vowel", "c1_place", "c2_place"), sep = ":") |> 
+  separate(vowel, c("par", "coef", "vowel"))
+```
+
+```{r}
+#| label: bm-1-draws-average-vow
+
+bm_1_draws_long_avg <- bm_1_draws_long |> 
+  group_by(.chain, .iteration, .draw, coef, vowel) |> 
+  summarise(epred = mean(value), .groups = "drop")
+
+bm_1_draws_long_avg |> 
+  group_by(coef, vowel) |> 
+  summarise(
+    mean = mean(epred),
+    lo_90 = quantile2(epred, 0.05),
+    hi_90 = quantile2(epred, 0.95)
+  )
+```
+
+```{r}
+#| label: bm-1-draws-average-c1
+
+bm_1_draws_long_avg_c1 <- bm_1_draws_long |> 
+  group_by(.chain, .iteration, .draw, coef, c1_place) |> 
+  summarise(epred = mean(value), .groups = "drop")
+
+bm_1_draws_long_avg_c1 |> 
+  group_by(coef, c1_place) |> 
+  summarise(
+    mean = mean(epred), sd = sd(epred),
+    lo_90 = quantile2(epred, 0.05),
+    hi_90 = quantile2(epred, 0.95)
+  ) |> 
+  mutate(across(where(is.numeric), ~round(., 2)))
+  
+```
+
+```{r}
+#| label: bm-1-draws-average-c1-vow
+
+bm_1_draws_long_avg_c1_vow <- bm_1_draws_long |> 
+  group_by(.chain, .iteration, .draw, coef, vowel, c1_place) |> 
+  summarise(epred = mean(value), .groups = "drop")
+
+bm_1_draws_long_avg_c1_vow |> 
+  filter(coef == "a") |> 
+  group_by(c1_place, vowel) |> 
+  summarise(
+    mean = mean(epred), sd = sd(epred),
+    lo_90 = quantile2(epred, 0.05),
+    hi_90 = quantile2(epred, 0.95)
+  ) |> 
+  mutate(across(where(is.numeric), ~round(., 2)))
+```
+
+
+```{r}
+#| label: bm-1-draws-average-place-vow
+
+bm_1_draws_long_avg_pl_vow <- bm_1_draws_long |> 
+  group_by(.chain, .iteration, .draw, coef, vowel, c1_place, c2_place) |> 
+  summarise(epred = mean(value), .groups = "drop")
+
+bm_1_draws_long_avg_pl_vow |> 
+  filter(coef == "a") |> 
+  group_by(c1_place, c2_place, vowel) |> 
+  summarise(
+    mean = mean(epred), sd = sd(epred),
+    lo_90 = quantile2(epred, 0.05),
+    hi_90 = quantile2(epred, 0.95)
+  ) |> 
+  mutate(across(where(is.numeric), ~round(., 2)))
+```
+
+
+```{r}
 #| label: bm-1-coef-table-a
 
 bm_1_coef_table_a <- bm_1 %>%
