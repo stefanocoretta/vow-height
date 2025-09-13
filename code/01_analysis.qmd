@@ -2,8 +2,6 @@
 title: "Analysis of intrinsic vowel duration in Northwestern Italian"
 author: "Stefano Coretta"
 date: today
-execute: 
-  cache: true
 format:
   html: 
     toc: true
@@ -24,7 +22,6 @@ library(brms)
 library(rstan)
 library(posterior)
 library(tidybayes)
-library(marginaleffects)
 library(ggdist)
 library(mgcv)
 library(tidygam)
@@ -198,7 +195,7 @@ bm_1_priors <- brm(
   file = "data/cache/bm_1_priors",
 )
 
-bm_1_priors
+fixef(bm_1_priors, probs = c(0.05, 0.95))
 ```
 
 ```{r}
@@ -260,64 +257,62 @@ bm_1_draws_long_avg |>
     mean = mean(epred),
     lo_90 = quantile2(epred, 0.05),
     hi_90 = quantile2(epred, 0.95)
+  ) |> 
+  mutate(across(where(is.numeric), ~round(., 2)))
+```
+
+### Coefficient `b`
+
+```{r}
+#| label: bm-1-draws-average-place-vow-b
+
+bm_1_draws_long_avg_pl_vow <- bm_1_draws_long |> 
+  group_by(.chain, .iteration, .draw, coef, vowel, c1_place, c2_place) |> 
+  summarise(epred = mean(value), .groups = "drop") |> 
+  mutate(
+    c1_place = str_remove(c1_place, "c1_place") |> str_sub(1, 3),
+    c2_place = str_remove(c2_place, "c2_place") |> str_sub(1, 3),
+    vowel = str_remove(vowel, "vowel")
+  ) |> 
+  unite("c1_c2", c1_place, c2_place)
+
+bm_1_draws_long_avg_pl_vow |> 
+  filter(coef == "b") |> 
+  group_by(c1_c2, vowel) |> 
+  summarise(
+    mean = mean(epred), sd = sd(epred),
+    lo_90 = quantile2(epred, 0.05),
+    hi_90 = quantile2(epred, 0.95)
+  ) |> 
+  mutate(
+    across(where(is.numeric), ~round(., 2))
   )
 ```
 
 ```{r}
-#| label: bm-1-draws-average-c1
-
-bm_1_draws_long_avg_c1 <- bm_1_draws_long |> 
-  group_by(.chain, .iteration, .draw, coef, c1_place) |> 
-  summarise(epred = mean(value), .groups = "drop")
-
-bm_1_draws_long_avg_c1 |> 
-  group_by(coef, c1_place) |> 
-  summarise(
-    mean = mean(epred), sd = sd(epred),
-    lo_90 = quantile2(epred, 0.05),
-    hi_90 = quantile2(epred, 0.95)
-  ) |> 
-  mutate(across(where(is.numeric), ~round(., 2)))
-  
-```
-
-```{r}
-#| label: bm-1-draws-average-c1-vow
-
-bm_1_draws_long_avg_c1_vow <- bm_1_draws_long |> 
-  group_by(.chain, .iteration, .draw, coef, vowel, c1_place) |> 
-  summarise(epred = mean(value), .groups = "drop")
-
-bm_1_draws_long_avg_c1_vow |> 
-  filter(coef == "a") |> 
-  group_by(c1_place, vowel) |> 
-  summarise(
-    mean = mean(epred), sd = sd(epred),
-    lo_90 = quantile2(epred, 0.05),
-    hi_90 = quantile2(epred, 0.95)
-  ) |> 
-  mutate(across(where(is.numeric), ~round(., 2)))
-```
-
-
-```{r}
-#| label: bm-1-draws-average-place-vow
-
-bm_1_draws_long_avg_pl_vow <- bm_1_draws_long |> 
-  group_by(.chain, .iteration, .draw, coef, vowel, c1_place, c2_place) |> 
-  summarise(epred = mean(value), .groups = "drop")
+#| label: coef-b-plots
+#| warning: false
 
 bm_1_draws_long_avg_pl_vow |> 
-  filter(coef == "a") |> 
-  group_by(c1_place, c2_place, vowel) |> 
-  summarise(
-    mean = mean(epred), sd = sd(epred),
-    lo_90 = quantile2(epred, 0.05),
-    hi_90 = quantile2(epred, 0.95)
-  ) |> 
-  mutate(across(where(is.numeric), ~round(., 2)))
+  filter(coef == "b", !(c1_c2 == "lab_cor" & vowel == "e"), !(c1_c2 == "vel_vel" & vowel == "a")) |> 
+  mutate(vowel = factor(vowel, levels = c("a", "o", "e", "i", "u"))) |> 
+  ggplot(aes(epred, c1_c2)) +
+  geom_vline(xintercept = 0) +
+  stat_halfeye() +
+  facet_grid(cols = vars(vowel)) +
+  xlim(-1, 1.7)
+
+bm_1_draws_long_avg_pl_vow |> 
+  filter(coef == "b", !(c1_c2 == "lab_cor" & vowel == "e"), !(c1_c2 == "vel_vel" & vowel == "a"), c1_c2 %in% c("lab_lab", "cor_cor", "vel_vel")) |> 
+  mutate(vowel = factor(vowel, levels = c("a", "o", "e", "i", "u"))) |> 
+  ggplot(aes(epred, c1_c2)) +
+  geom_vline(xintercept = 0) +
+  stat_halfeye() +
+  facet_grid(rows = vars(vowel)) +
+  xlim(-1, 1.7)
 ```
 
+### Coefficient tables
 
 ```{r}
 #| label: bm-1-coef-table-a
@@ -344,18 +339,6 @@ bm_1_coef_table_a
 # bm_1_coef_table_a |> knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
-```{r}
-#| label: bm-1-coef-table-b
-bm_1_coef_table_b <- bm_1 %>%
-  as_draws_df() %>%
-  select(b_b_vowela:b_b_vowelu) %>%
-  pivot_longer(b_b_vowela:b_b_vowelu) %>%
-  group_by(name) %>%
-  median_hdi() 
-bm_1_coef_table_b
-
-# bm_1_coef_table_b |> knitr::kable(format = "latex") %>% cat(sep = "\n")
-```
 
 ```{r}
 #| label: bm-1-coef-table-b-2
@@ -395,8 +378,8 @@ pp_check(bm_1, ndraws = 50)
 #| label: bm-1-fix
 bm_1_fix <- fixef(bm_1) |> as_tibble(rownames = "term") |> 
   mutate(
-    theta = rep(0, 11),
-    sigma_prior = c(rep(1, 10), 0.1),
+    theta = rep(0, 91),
+    sigma_prior = c(rep(1, 90), 0.1),
     z = abs((Estimate - theta) / Est.Error),
     s = 1 - (Est.Error^2 / sigma_prior^2)
   )
@@ -417,7 +400,7 @@ bm_1_fix |>
   annotate("rect", xmin = 0, ymin = 2.5, xmax = 0.5, ymax = Inf, alpha = 0.5, fill = "#fdb863") +
   annotate("rect", xmin = 0.5, ymin = 0, xmax = 1, ymax = 2.5, alpha = 0.5, fill = "#b2abd2") +
   annotate("rect", xmin = 0.5, ymin = 2.5, xmax = 1, ymax = Inf, alpha = 0.5, fill = "#5e3c99") +
-  geom_text() +
+  geom_text(size = 2, alpha = 0.5) +
   geom_point() +
   geom_label(data = labels, colour = "white", fill = "black") +
   xlim(0, 1)
@@ -449,6 +432,8 @@ seq_minmax <- function(x, by = 1) {
 bm_1_grid <- expand_grid(
   vowel = levels(ita_egg$vowel),
   f13_z = seq_minmax(ita_egg$f13_z, 0.5),
+  c1_place = levels(ita_egg$c1_place),
+  c2_place = levels(ita_egg$c2_place),
   speech_rate_logz = 0
 )
 
@@ -552,30 +537,6 @@ bm_1_preds %>%
   geom_vline(data = vmean_f13z, aes(xintercept = f13z_mean, colour = vowel)) +
   facet_wrap(~vowel) +
   scale_fill_viridis_d()
-```
-
-### Average predictions and comparisons
-
-```{r}
-#| label: bm-1-avg-pred
-
-avg_comparisons(bm_1, variables = "f13_z", conf_level = 0.9)
-```
-
-```{r}
-#| label: bm-1-comp-vow
-
-avg_comparisons(bm_1, variables = "f13_z", by = "vowel", conf_level = 0.9)
-```
-
-```{r}
-#| label: bm-1-comp
-
-avg_predictions(bm_1, by = "vowel", conf_level = 0.9) %>%
-  as_tibble() %>%
-  mutate_if(
-    is.numeric, function(x) {exp(x * sd(ita_egg$duration_log) + mean(ita_egg$duration_log))}
-  )
 ```
 
 ### Group-level effects
@@ -738,6 +699,7 @@ bms_1_coef_table_2 <- bms_1 %>%
   unite("q80", q80_lo, q80_hi, sep = ", ") |> 
   unite("q60", q60_lo, q60_hi, sep = ", ")
 bms_1_coef_table_2
+
 # bms_1_coef_table_2 |> knitr::kable(format = "latex") %>% cat(sep = "\n")
 ```
 
@@ -862,7 +824,9 @@ bms_1_preds %>%
 ggsave("img/bms1-pred-plot-ms-hz.png", width = 7, height = 5)
 ```
 
-## Non-linear modelling: GAM F1 and F2
+## Non-linear modelling: mgcv F1 and F2
+
+This is extra modelling of F1/F2 using mgcv. Does not feature in the publication and it's unrelated to the research questions of the paper.
 
 ```{r}
 #| label: gam-2
